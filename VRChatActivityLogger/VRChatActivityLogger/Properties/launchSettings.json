@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "VRChatActivityLogger": {
+      "commandName": "Project",
+      "commandLineArgs": "-console true"
+    }
+  }
+}
