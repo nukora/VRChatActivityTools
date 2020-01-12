@@ -84,7 +84,7 @@ namespace VRChatActivityLogger
             string joinedRoom2Detail = detailHeader + @"\[RoomManager\] Joining or Creating Room: (.+)$";
             string sendFriendRequestDetail = detailHeader + @".+to (.{40}) of";
             string receivedFriendRequestDetail = detailHeader + @"Received Message of type: notification content: ({{.+}}) received at";
-            string acceptFriendRequestDetail = detailHeader + @".+username:(.+), .+to (.{40}) of.+ id: (.{40}),";
+            string acceptFriendRequestDetail = detailHeader + @".+username:(.+), sender user id:(.{40}).+id: (.{40}),";
 
             ReceivedInviteDetail = new Regex(receivedInviteDetail, RegexOptions.Compiled);
             ReceivedRequestInviteDetail = new Regex(receivedRequestInviteDetail, RegexOptions.Compiled);
