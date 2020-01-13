@@ -33,6 +33,7 @@ namespace VRChatActivityLogger
             {
                 FileName = System.Environment.CurrentDirectory + "/Logs/VRChatActivityLogger/${shortdate}.log",
                 Layout = "${longdate} [${uppercase:${level}}] ${message}",
+                MaxArchiveFiles = 5,
             };
             var consoleTarget = new NLog.Targets.ConsoleTarget()
             {
