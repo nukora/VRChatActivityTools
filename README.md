@@ -19,11 +19,11 @@ https://nukora.booth.pm/items/1690568
 
 ### VRChatActivityTools_v.0.0.zip
 
-起動に別途 .NET Core 3.0 Runtime のインストールが必要になりますが、ファイルサイズが小さく、起動にかかる時間も短いです。
+起動に別途 .NET Core 3.1 Runtime のインストールが必要になりますが、ファイルサイズが小さく、起動にかかる時間も短いです。
 
 ランタイムは以下の場所にあります。
 
-https://dotnet.microsoft.com/download/dotnet-core/3.0
+https://dotnet.microsoft.com/download/dotnet-core/3.1
 
 .NET Core RuntimeとDesktop Runtimeの最新版をインストールしてください。
 
