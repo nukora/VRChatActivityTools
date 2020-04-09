@@ -53,7 +53,7 @@ namespace VRChatActivityLogger
             string sendRequestInvite = header + @"Send notification:.+type:requestInvite.+$";
             string joinedRoom1 = header + @"\[RoomManager\] Joining w.+$";
             string joinedRoom2 = header + @"\[RoomManager\] Joining or Creating Room:.+$";
-            string metPlayer = header + @"mPlayerInstigatorIdDictionary.+$";
+            string metPlayer = header + @"\[Player\] Initialized PlayerAPI.+$";
             string sendFriendRequest = header + @"Send notification:.+type:friendRequest.+$";
             string receivedFriendRequest = header + @"Received Message of type: notification content:.+""type"":""friendRequest"".+$";
             string acceptFriendRequest = header + @"AcceptFriendRequest.+$";
@@ -79,7 +79,7 @@ namespace VRChatActivityLogger
             string receivedRequestInviteDetail = detailHeader + @"Received Message of type: notification content: ({{.+}}) received at";
             string sendInviteDetail = detailHeader + @".+to (.{40}) of.+worldId=(.+), worldName=(.+)}},";
             string sendRequestInviteDetail = detailHeader + @".+to (.{40}) of";
-            string metPlayerDetail = detailHeader + @"mPlayerInstigatorIdDictionary\[\d+\] = (.+)$";
+            string metPlayerDetail = detailHeader + @"\[Player\] Initialized PlayerAPI ""(.+)"" is (remote|local)$";
             string joinedRoom1Detail = detailHeader + @"\[RoomManager\] Joining (.+)$";
             string joinedRoom2Detail = detailHeader + @"\[RoomManager\] Joining or Creating Room: (.+)$";
             string sendFriendRequestDetail = detailHeader + @".+to (.{40}) of";
