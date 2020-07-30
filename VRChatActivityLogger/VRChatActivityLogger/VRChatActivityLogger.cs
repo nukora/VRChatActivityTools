@@ -121,6 +121,12 @@ namespace VRChatActivityLogger
                     {
                         var m = RegexPatterns.ReceivedInviteDetail.Match(match.ToString());
                         var jsonRawDate = m.Groups[2].Value.Replace("{{", "{").Replace("}}", "}");
+                        var numCurlyBracketBegin = jsonRawDate.Count(c => c == '{');
+                        var numCurlyBracketEnd = jsonRawDate.Count(c => c == '}');
+                        if (numCurlyBracketBegin > numCurlyBracketEnd)
+                        {
+                            jsonRawDate += new string('}', numCurlyBracketBegin - numCurlyBracketEnd);
+                        }
                         dynamic content = JsonConvert.DeserializeObject(jsonRawDate);
                         var activityLog = new ActivityLog
                         {
