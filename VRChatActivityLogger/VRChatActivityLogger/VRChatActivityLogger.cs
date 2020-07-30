@@ -120,14 +120,14 @@ namespace VRChatActivityLogger
                     if (match.Groups[PatternType.ReceivedInvite].Value.Length != 0)
                     {
                         var m = RegexPatterns.ReceivedInviteDetail.Match(match.ToString());
-                        var jsonRawDate = m.Groups[2].Value.Replace("{{", "{").Replace("}}", "}");
-                        var numCurlyBracketBegin = jsonRawDate.Count(c => c == '{');
-                        var numCurlyBracketEnd = jsonRawDate.Count(c => c == '}');
+                        var jsonRawData = m.Groups[2].Value.Replace("{{", "{").Replace("}}", "}");
+                        var numCurlyBracketBegin = jsonRawData.Count(c => c == '{');
+                        var numCurlyBracketEnd = jsonRawData.Count(c => c == '}');
                         if (numCurlyBracketBegin > numCurlyBracketEnd)
                         {
-                            jsonRawDate += new string('}', numCurlyBracketBegin - numCurlyBracketEnd);
+                            jsonRawData += new string('}', numCurlyBracketBegin - numCurlyBracketEnd);
                         }
-                        dynamic content = JsonConvert.DeserializeObject(jsonRawDate);
+                        dynamic content = JsonConvert.DeserializeObject(jsonRawData);
                         var activityLog = new ActivityLog
                         {
                             ActivityType = ActivityType.ReceivedInvite,
@@ -147,8 +147,8 @@ namespace VRChatActivityLogger
                     if (match.Groups[PatternType.ReceivedRequestInvite].Value.Length != 0)
                     {
                         var m = RegexPatterns.ReceivedRequestInviteDetail.Match(match.ToString());
-                        var jsonRawDate = m.Groups[2].Value.Replace("{{", "{").Replace("}}", "}");
-                        dynamic content = JsonConvert.DeserializeObject(jsonRawDate);
+                        var jsonRawData = m.Groups[2].Value.Replace("{{", "{").Replace("}}", "}");
+                        dynamic content = JsonConvert.DeserializeObject(jsonRawData);
                         var activityLog = new ActivityLog
                         {
                             ActivityType = ActivityType.ReceivedRequestInvite,
@@ -241,8 +241,8 @@ namespace VRChatActivityLogger
                     if (match.Groups[PatternType.ReceivedFriendRequest].Value.Length != 0)
                     {
                         var m = RegexPatterns.ReceivedFriendRequestDetail.Match(match.ToString());
-                        var jsonRawDate = m.Groups[2].Value.Replace("{{", "{").Replace("}}", "}");
-                        dynamic content = JsonConvert.DeserializeObject(jsonRawDate);
+                        var jsonRawData = m.Groups[2].Value.Replace("{{", "{").Replace("}}", "}");
+                        dynamic content = JsonConvert.DeserializeObject(jsonRawData);
                         var activityLog = new ActivityLog
                         {
                             ActivityType = ActivityType.ReceivedFriendRequest,
