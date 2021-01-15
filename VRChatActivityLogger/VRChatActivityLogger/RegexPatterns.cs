@@ -79,7 +79,7 @@ namespace VRChatActivityLogger
             string receivedRequestInviteDetail = detailHeader + @"Received Message of type: notification content: ({{.+}}) received at";
             string sendInviteDetail = detailHeader + @".+to (.{40}) of.+worldId=(.+), worldName=(.+)}},";
             string sendRequestInviteDetail = detailHeader + @".+to (.{40}) of";
-            string metPlayerDetail = detailHeader + @"\[Player\] Initialized PlayerAPI ""(.+)"" is (remote|local)$";
+            string metPlayerDetail = detailHeader + @"\[Player\] Initialized PlayerAPI ""(.*)"" is (remote|local)$";
             string joinedRoom1Detail = detailHeader + @"\[RoomManager\] Joining (.+)$";
             string joinedRoom2Detail = detailHeader + @"\[RoomManager\] Joining or Creating Room: (.+)$";
             string sendFriendRequestDetail = detailHeader + @".+to (.{40}) of";
