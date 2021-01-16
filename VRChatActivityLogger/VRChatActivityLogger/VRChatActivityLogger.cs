@@ -16,6 +16,11 @@ namespace VRChatActivityLogger
     class VRChatActivityLogger
     {
         /// <summary>
+        /// ロガー
+        /// </summary>
+        private NLog.Logger logger = Logger.GetLogger();
+
+        /// <summary>
         /// VRChatのログの保存場所
         /// </summary>
         public string VRChatLogFilePath { get; set; } =
@@ -30,6 +35,8 @@ namespace VRChatActivityLogger
             var logger = Logger.GetLogger();
             try
             {
+                ClearErrorInfoFile();
+
                 var activityLogs = new List<ActivityLog>();
                 foreach (var file in Directory.EnumerateFiles(VRChatLogFilePath, "output_log_*"))
                 {
@@ -92,7 +99,8 @@ namespace VRChatActivityLogger
             catch (Exception ex)
             {
                 logger.Error(ex);
-                Console.WriteLine(ex);
+                WriteErrorInfoFile();
+                return -1;
             }
             return 0;
         }
@@ -104,19 +112,32 @@ namespace VRChatActivityLogger
         /// <returns></returns>
         private List<ActivityLog> ParseVRChatLog(string filePath)
         {
-            var logger = Logger.GetLogger();
             string rawData = "";
             var activityLogs = new List<ActivityLog>();
             using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             using (var sr = new StreamReader(fs, Encoding.GetEncoding("UTF-8")))
             {
+                processingFilePath = filePath;
+                processingLineNumber = 0;
+
                 while ((rawData = sr.ReadLine()) != null)
                 {
+                    processingLineNumber++;
+
                     if (rawData.Length > 25 && rawData.Substring(20, 5) == "Error")
                     {
                         continue;
                     }
+
                     Match match = RegexPatterns.All.Match(rawData);
+
+                    if (!match.Success)
+                    {
+                        continue;
+                    }
+
+                    processingLine = match.Value;
+
                     if (match.Groups[PatternType.ReceivedInvite].Value.Length != 0)
                     {
                         var m = RegexPatterns.ReceivedInviteDetail.Match(match.ToString());
@@ -142,9 +163,8 @@ namespace VRChatActivityLogger
                         {
                             activityLogs.Add(activityLog);
                         }
-                        continue;
                     }
-                    if (match.Groups[PatternType.ReceivedRequestInvite].Value.Length != 0)
+                    else if (match.Groups[PatternType.ReceivedRequestInvite].Value.Length != 0)
                     {
                         var m = RegexPatterns.ReceivedRequestInviteDetail.Match(match.ToString());
                         var jsonRawData = m.Groups[2].Value.Replace("{{", "{").Replace("}}", "}");
@@ -161,9 +181,8 @@ namespace VRChatActivityLogger
                         {
                             activityLogs.Add(activityLog);
                         }
-                        continue;
                     }
-                    if (match.Groups[PatternType.SendInvite].Value.Length != 0)
+                    else if (match.Groups[PatternType.SendInvite].Value.Length != 0)
                     {
                         var m = RegexPatterns.SendInviteDetail.Match(match.ToString());
                         activityLogs.Add(new ActivityLog
@@ -174,9 +193,8 @@ namespace VRChatActivityLogger
                             WorldID = m.Groups[3].Value,
                             WorldName = m.Groups[4].Value,
                         });
-                        continue;
                     }
-                    if (match.Groups[PatternType.SendRequestInvite].Value.Length != 0)
+                    else if (match.Groups[PatternType.SendRequestInvite].Value.Length != 0)
                     {
                         var m = RegexPatterns.SendRequestInviteDetail.Match(match.ToString());
                         activityLogs.Add(new ActivityLog
@@ -185,9 +203,8 @@ namespace VRChatActivityLogger
                             Timestamp = DateTime.Parse(m.Groups[1].Value),
                             UserID = m.Groups[2].Value,
                         });
-                        continue;
                     }
-                    if (match.Groups[PatternType.JoinedRoom1].Value.Length != 0)
+                    else if (match.Groups[PatternType.JoinedRoom1].Value.Length != 0)
                     {
                         var m = RegexPatterns.JoinedRoom1Detail.Match(match.ToString());
                         activityLogs.Add(new ActivityLog
@@ -196,9 +213,8 @@ namespace VRChatActivityLogger
                             Timestamp = DateTime.Parse(m.Groups[1].Value),
                             WorldID = m.Groups[2].Value,
                         });
-                        continue;
                     }
-                    if (match.Groups[PatternType.JoinedRoom2].Value.Length != 0)
+                    else if (match.Groups[PatternType.JoinedRoom2].Value.Length != 0)
                     {
                         var m = RegexPatterns.JoinedRoom2Detail.Match(match.ToString());
                         if (activityLogs.Any() && activityLogs[activityLogs.Count - 1].ActivityType == ActivityType.JoinedRoom)
@@ -214,9 +230,8 @@ namespace VRChatActivityLogger
                                 WorldName = m.Groups[2].Value,
                             });
                         }
-                        continue;
                     }
-                    if (match.Groups[PatternType.MetPlayer].Value.Length != 0)
+                    else if (match.Groups[PatternType.MetPlayer].Value.Length != 0)
                     {
                         var m = RegexPatterns.MetPlayerDetail.Match(match.ToString());
                         activityLogs.Add(new ActivityLog
@@ -225,9 +240,8 @@ namespace VRChatActivityLogger
                             Timestamp = DateTime.Parse(m.Groups[1].Value),
                             UserName = m.Groups[2].Value,
                         });
-                        continue;
                     }
-                    if (match.Groups[PatternType.SendFriendRequest].Value.Length != 0)
+                    else if (match.Groups[PatternType.SendFriendRequest].Value.Length != 0)
                     {
                         var m = RegexPatterns.SendFriendRequestDetail.Match(match.ToString());
                         activityLogs.Add(new ActivityLog
@@ -236,9 +250,8 @@ namespace VRChatActivityLogger
                             Timestamp = DateTime.Parse(m.Groups[1].Value),
                             UserID = m.Groups[2].Value,
                         });
-                        continue;
                     }
-                    if (match.Groups[PatternType.ReceivedFriendRequest].Value.Length != 0)
+                    else if (match.Groups[PatternType.ReceivedFriendRequest].Value.Length != 0)
                     {
                         var m = RegexPatterns.ReceivedFriendRequestDetail.Match(match.ToString());
                         var jsonRawData = m.Groups[2].Value.Replace("{{", "{").Replace("}}", "}");
@@ -255,9 +268,8 @@ namespace VRChatActivityLogger
                         {
                             activityLogs.Add(activityLog);
                         }
-                        continue;
                     }
-                    if (match.Groups[PatternType.AcceptFriendRequest].Value.Length != 0)
+                    else if (match.Groups[PatternType.AcceptFriendRequest].Value.Length != 0)
                     {
                         var m = RegexPatterns.AcceptFriendRequestDetail.Match(match.ToString());
                         activityLogs.Add(new ActivityLog
@@ -268,14 +280,26 @@ namespace VRChatActivityLogger
                             UserID = m.Groups[3].Value,
                             NotificationID = m.Groups[4].Value,
                         });
+                    }
+                    else
+                    {
                         continue;
                     }
+
+                    processingLine = string.Empty;
                 }
+
+                processingLineNumber = 0;
+                processingFilePath = string.Empty;
             }
 
             return activityLogs;
         }
 
+        /// <summary>
+        /// データベースを新規作成します。
+        /// </summary>
+        /// <returns></returns>
         private bool CreateDatabase()
         {
             using (SqliteConnection db = new SqliteConnection($"Filename={DatabaseContext.DBFilePath}"))
@@ -301,6 +325,43 @@ CREATE TABLE ""ActivityLogs"" (
                 createTable.ExecuteReader();
             }
             return true;
+        }
+
+        private string processingFilePath = string.Empty;
+
+        private int processingLineNumber = 0;
+
+        private string processingLine = string.Empty;
+
+        private readonly string errorFilePath = "./Logs/VRChatActivityLogger/errorfile.txt";
+
+        /// <summary>
+        /// エラーファイルをクリアします。
+        /// </summary>
+        private void ClearErrorInfoFile()
+        {
+            if (File.Exists(errorFilePath))
+            {
+                File.Delete(errorFilePath);
+            }
+        }
+
+        /// <summary>
+        /// エラーファイルを書き出します。
+        /// </summary>
+        private void WriteErrorInfoFile()
+        {
+            if (!string.IsNullOrEmpty(processingFilePath))
+            {
+                var body =
+                    Path.GetFullPath(processingFilePath) + Environment.NewLine +
+                    processingLineNumber + Environment.NewLine +
+                    processingLine + Environment.NewLine;
+                File.WriteAllText(errorFilePath, body);
+
+                logger.Error($"{processingFilePath}#{processingLineNumber}");
+                logger.Error($"{processingLine}");
+            }
         }
     }
 }

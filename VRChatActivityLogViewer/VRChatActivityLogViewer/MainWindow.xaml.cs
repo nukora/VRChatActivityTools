@@ -16,6 +16,8 @@ namespace VRChatActivityLogViewer
     {
         private ObservableCollection<ActivityLogGridModel> ActivityLogGridModelCollection = new ObservableCollection<ActivityLogGridModel>();
 
+        private readonly string errorFilePath = "./Logs/VRChatActivityLogger/errorfile.txt";
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -82,35 +84,47 @@ namespace VRChatActivityLogViewer
         /// <param name="e"></param>
         private async void loggerButton_Click(object sender, RoutedEventArgs e)
         {
-
             try
             {
-
                 EnableProcessingMode();
 
-                await Task.Run(() =>
+                var success = await Task.Run(() =>
                 {
                     var process = Process.Start("VRChatActivityLogger.exe");
                     process.WaitForExit();
+                    return process.ExitCode == 0;
                 });
 
+                DisableProcessingMode();
+
+                if (!success)
+                {
+                    if (File.Exists(errorFilePath))
+                    {
+                        var errorFileLines = File.ReadAllLines(errorFilePath);
+                        if (0 < errorFileLines.Length)
+                        {
+                            var dialog = new LoggerErrorDialog(errorFileLines[0]);
+                            dialog.Owner = this;
+                            dialog.ShowDialog();
+
+                            return;
+                        }
+                    }
+
+                    MessageBox.Show("VRChatログの解析に失敗しました。", "VRChatActivityLogViewer");
+                }
             }
             catch (System.ComponentModel.Win32Exception)
             {
                 MessageBox.Show("VRChatActivityLogger.exeが見つかりませんでした。", "VRChatActivityLogViewer");
+                DisableProcessingMode();
             }
             catch (Exception)
             {
                 MessageBox.Show("エラーが発生しました。プログラムを終了します。", "VRChatActivityLogViewer");
                 Application.Current.Shutdown();
             }
-            finally
-            {
-
-                DisableProcessingMode();
-
-            }
-
         }
 
         /// <summary>

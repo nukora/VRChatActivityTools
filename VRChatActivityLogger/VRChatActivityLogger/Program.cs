@@ -12,7 +12,7 @@ namespace VRChatActivityLogger
         /// エントリポイント
         /// </summary>
         /// <param name="rawArgs"></param>
-        static void Main(string[] rawArgs)
+        static int Main(string[] rawArgs)
         {
 
             var args = new Argument(rawArgs)
@@ -30,9 +30,11 @@ namespace VRChatActivityLogger
             logger.Info("VRChatActivityLoggerを実行します。");
 
             var app = new VRChatActivityLogger();
-            app.Run();
+            var returnCode = app.Run();
 
             logger.Info("VRChatActivityLoggerを終了します。");
+
+            return returnCode;
         }
     }
 }

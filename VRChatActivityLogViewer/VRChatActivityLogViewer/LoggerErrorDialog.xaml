@@ -1,0 +1,28 @@
+﻿<Window x:Class="VRChatActivityLogViewer.LoggerErrorDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:VRChatActivityLogViewer"
+        mc:Ignorable="d"
+        Title="VRChatActivityLogViewer" Height="200" Width="500" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="40" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Margin="16,0" VerticalAlignment="Center">
+            <TextBlock Margin="5">以下のVRChatログの解析に失敗しました。</TextBlock>
+            <TextBlock Margin="5">該当のログファイルを削除、または別の場所に移動する事でスキップして取り込めます。</TextBlock>
+            <TextBlock TextWrapping="WrapWithOverflow" Margin="5">
+                <Hyperlink Click="filePathLink_Click">
+                    <Run x:Name="filePathLink"></Run>
+                </Hyperlink>
+            </TextBlock>
+        </StackPanel>
+        <Grid Grid.Row="1" Background="#F0F0F0"/>
+        <Grid Grid.Row="1" Margin="16,8">
+            <Button Content="OK" VerticalAlignment="Center" HorizontalAlignment="Right" Width="70" Click="closeButton_Click" />
+        </Grid>
+    </Grid>
+</Window>
