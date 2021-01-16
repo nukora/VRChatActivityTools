@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -39,7 +40,15 @@ namespace VRChatActivityLogViewer
         /// <param name="e"></param>
         private async void searchButton_Click(object sender, RoutedEventArgs e)
         {
+            await ExecuteSearch();
+        }
 
+        /// <summary>
+        /// 検索処理の実行
+        /// </summary>
+        /// <returns></returns>
+        private async Task ExecuteSearch()
+        {
             try
             {
                 EnableProcessingMode();
@@ -60,21 +69,33 @@ namespace VRChatActivityLogViewer
                 };
                 var activityLogs = await VRChatActivityLogModel.SearchActivityLogs(parameter);
 
+                var keywords = keywordBox.Text.Split(' ').Where(s => s != string.Empty).ToArray();
+
                 ActivityLogGridModelCollection.Clear();
+
                 foreach (var activityLog in activityLogs)
                 {
-                    ActivityLogGridModelCollection.Add(new ActivityLogGridModel(activityLog));
+                    var gridModel = new ActivityLogGridModel(activityLog);
+
+                    if (keywords.Any())
+                    {
+                        var contained = keywords.All(k => gridModel.Content?.Contains(k, StringComparison.CurrentCultureIgnoreCase) ?? false);
+                        if (!contained)
+                        {
+                            continue;
+                        }
+                    }
+
+                    ActivityLogGridModelCollection.Add(gridModel);
                 }
 
                 DisableProcessingMode();
-
             }
             catch (Exception)
             {
                 MessageBox.Show("エラーが発生しました。プログラムを終了します。", "VRChatActivityLogViewer");
                 Application.Current.Shutdown();
             }
-
         }
 
         /// <summary>
@@ -204,6 +225,19 @@ namespace VRChatActivityLogViewer
             else
             {
                 searchButton.IsEnabled = false;
+            }
+        }
+
+        /// <summary>
+        /// キーワード入力時のイベント
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void keywordBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                await ExecuteSearch();
             }
         }
     }
