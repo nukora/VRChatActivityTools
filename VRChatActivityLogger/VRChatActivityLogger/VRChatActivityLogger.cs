@@ -211,7 +211,7 @@ namespace VRChatActivityLogger
                         {
                             ActivityType = ActivityType.JoinedRoom,
                             Timestamp = DateTime.Parse(m.Groups[1].Value),
-                            WorldID = m.Groups[2].Value,
+                            WorldID = m.Groups[3].Value,
                         });
                     }
                     else if (match.Groups[PatternType.JoinedRoom2].Value.Length != 0)
@@ -219,7 +219,7 @@ namespace VRChatActivityLogger
                         var m = RegexPatterns.JoinedRoom2Detail.Match(match.ToString());
                         if (activityLogs.Any() && activityLogs[activityLogs.Count - 1].ActivityType == ActivityType.JoinedRoom)
                         {
-                            activityLogs[activityLogs.Count - 1].WorldName = m.Groups[2].Value;
+                            activityLogs[activityLogs.Count - 1].WorldName = m.Groups[3].Value;
                         }
                         else
                         {
@@ -238,7 +238,7 @@ namespace VRChatActivityLogger
                         {
                             ActivityType = ActivityType.MetPlayer,
                             Timestamp = DateTime.Parse(m.Groups[1].Value),
-                            UserName = m.Groups[2].Value,
+                            UserName = m.Groups[3].Value,
                         });
                     }
                     else if (match.Groups[PatternType.SendFriendRequest].Value.Length != 0)
