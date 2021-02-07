@@ -20,8 +20,9 @@
   </Triggers>
   <Actions Context="Author">
     <Exec>
-      <Command>__COMMAND__</Command>
+      <Command>"__DIR__VRChatActivityLogger.exe"</Command>
       <Arguments>-console false</Arguments>
+      <WorkingDirectory>__DIR__</WorkingDirectory>
     </Exec>
   </Actions>
 </Task>
