@@ -97,7 +97,7 @@
         </Grid>
 
         <Border Grid.Row="2" BorderBrush="Silver" BorderThickness="1">
-            <DataGrid x:Name="ActivityLogGrid" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" RowHeight="30" CellStyle="{StaticResource Body_Content_DataGrid_Centering}" >
+            <DataGrid x:Name="ActivityLogGrid" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" MinRowHeight="30" CellStyle="{StaticResource Body_Content_DataGrid_Centering}" >
                 <DataGrid.ItemContainerStyle>
                     <Style TargetType="DataGridRow">
                         <Style.Triggers>
@@ -154,6 +154,16 @@
                                 <StackPanel Orientation="Horizontal">
                                     <Button Content="World ID" Width="64" Tag="{Binding}" Click="CopyWorldIDButton_Click" Visibility="{Binding IsCopyableWorldID, Converter={StaticResource BoolVisibilityConverter}}" Margin="5" />
                                     <Button Content="User ID" Width="64" Tag="{Binding}" Click="CopyUserIDButton_Click" Visibility="{Binding IsCopyableUserID, Converter={StaticResource BoolVisibilityConverter}}" Margin="5" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Show Thumbnail">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="Show" Width="64" Tag="{Binding}" Click="ShowThumbnailButton_Click" Visibility="{Binding IsCopyableWorldID, Converter={StaticResource BoolVisibilityConverter}}" Margin="5" />
+                                    <Image Source="{Binding WorldImage}" Stretch="Uniform" Margin="5" ></Image>
                                 </StackPanel>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>

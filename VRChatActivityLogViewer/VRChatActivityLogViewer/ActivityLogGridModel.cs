@@ -1,11 +1,14 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Windows.Media.Imaging;
 
 namespace VRChatActivityLogViewer
 {
     /// <summary>
     /// DataGridに表示するモデル
     /// </summary>
-    class ActivityLogGridModel
+    class ActivityLogGridModel : INotifyPropertyChanged
     {
         /// <summary>タイムスタンプ</summary>
         public DateTime TimeStamp { get; set; }
@@ -30,6 +33,32 @@ namespace VRChatActivityLogViewer
 
         /// <summary>ユーザID</summary>
         public string UserID { get; set; }
+
+        private BitmapImage _WorldImage;
+
+        /// <summary>ワールド画像</summary>
+        public BitmapImage WorldImage
+        {
+            get => _WorldImage;
+            set
+            {
+                if (value == _WorldImage) return;
+                _WorldImage = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        /// <summary>
+        /// プロパティが変更されたときに発生するイベント
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// プロパティ変更を通知するメソッド
+        /// </summary>
+        /// <param name="propertyName"></param>
+        private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
         /// <summary>
         /// コンストラクタ

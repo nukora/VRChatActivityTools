@@ -3,13 +3,17 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 
 namespace VRChatActivityLogViewer
 {
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -199,6 +203,49 @@ namespace VRChatActivityLogViewer
         }
 
         /// <summary>
+        /// Showボタンクリック時のイベント
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ShowThumbnailButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button)
+            {
+                if (button.Tag is ActivityLogGridModel tag)
+                {
+                    // ワールド情報JSONをAPIから取得
+                    var uri = "https://api.vrchat.cloud/api/1/worlds/" + tag.WorldID.Split(':')[0] + "?apiKey=JlE5Jldo5Jibnk5O5hTx6XVqsJu4WJ26";
+                    var webClient = new WebClient();
+                    try
+                    {
+                        string str = webClient.DownloadString(uri);
+
+                        // JSONをパースしてワールド画像のURLを取得
+                        using var memoryStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(str));
+                        var serializer = new DataContractJsonSerializer(typeof(WorldData));
+                        var src = ((WorldData)serializer.ReadObject(memoryStream)).thumbnailImageUrl;
+
+                        var img = new BitmapImage();
+                        img.BeginInit();
+                        img.UriSource = new Uri(src);
+                        img.EndInit();
+
+                        tag.WorldImage = img;
+                    }
+                    catch (WebException)
+                    {
+                        MessageBox.Show("ワールド情報取得時にエラーが発生しました。", "VRChatActivityLogViewer");
+                    }
+                    catch (Exception)
+                    {
+                        MessageBox.Show("エラーが発生しました。プログラムを終了します。", "VRChatActivityLogViewer");
+                        Application.Current.Shutdown();
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// 処理中モードにする
         /// </summary>
         private void EnableProcessingMode()
@@ -239,6 +286,11 @@ namespace VRChatActivityLogViewer
             {
                 await ExecuteSearch();
             }
+        }
+
+        private void ActivityLogGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }
