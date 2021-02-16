@@ -49,7 +49,7 @@ namespace VRChatActivityLogger
 
             string receivedInvite = header + @"Received Message of type: notification content:.+""type"":""invite"".+$";
             string receivedRequestInvite = header + @"Received Message of type: notification content:.+""type"":""requestInvite"".+$";
-            string sendInvite = header + @"Send notification:.+type:invite.+$";
+            string sendInvite = header + @"Send notification:.+type:invite,.+$";
             string sendRequestInvite = header + @"Send notification:.+type:requestInvite.+$";
             string joinedRoom1 = header + @"\[RoomManager\] Joining w.+$";
             string joinedRoom2 = header + @"\[RoomManager\] Joining or Creating Room:.+$";
