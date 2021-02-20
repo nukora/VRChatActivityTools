@@ -47,15 +47,15 @@ namespace VRChatActivityLogger
             //ログの種類判別(個別)
             string header = @"^\d{4}\.\d{2}\.\d{2}\s\d{2}:\d{2}:\d{2}\sLog\s{8}-\s{2}";
 
-            string receivedInvite = header + @"Received Message of type: notification content:.+""type"":""invite"".+$";
-            string receivedRequestInvite = header + @"Received Message of type: notification content:.+""type"":""requestInvite"".+$";
+            string receivedInvite = header + @"Received Notification:.+type:invite,.+$";
+            string receivedRequestInvite = header + @" Received notification:.+type:requestInvite,.+$";
             string sendInvite = header + @"Send notification:.+type:invite,.+$";
             string sendRequestInvite = header + @"Send notification:.+type:requestInvite.+$";
             string joinedRoom1 = header + @"\[(RoomManager|[Ǆǅ]*)\] Joining w.+$";
             string joinedRoom2 = header + @"\[(RoomManager|[Ǆǅ]*)\] Joining or Creating Room:.+$";
             string metPlayer = header + @"\[(Player|[Ǆǅ]*)\] Initialized PlayerAPI.+$";
             string sendFriendRequest = header + @"Send notification:.+type:friendRequest.+$";
-            string receivedFriendRequest = header + @"Received Message of type: notification content:.+""type"":""friendRequest"".+$";
+            string receivedFriendRequest = header + @"Received notification:.+type:friendRequest,.+$";
             string acceptFriendRequest = header + @"AcceptFriendRequest.+$";
 
             //ログの種類判別(一括)
@@ -75,7 +75,7 @@ namespace VRChatActivityLogger
             //ログの詳細を解析
             string detailHeader = @"^(\d{4}\.\d{2}\.\d{2}\s\d{2}:\d{2}:\d{2})\sLog\s{8}-\s{2}";
 
-            string receivedInviteDetail = detailHeader + @"Received Message of type: notification content: ({{.+}}) received at";
+            string receivedInviteDetail = detailHeader + @"Received Notification: <Notification from username:(.+), sender user id:(.{40}).+ of type: invite, id: (.{40}).+worldId=(.+), worldName=(.+?)(, inviteMessage=(.+?))?(, imageUrl=(.+?))?}}, type:invite,.+$";
             string receivedRequestInviteDetail = detailHeader + @"Received Message of type: notification content: ({{.+}}) received at";
             string sendInviteDetail = detailHeader + @".+to (.{40}) of.+worldId=(.+), worldName=(.+)}},";
             string sendRequestInviteDetail = detailHeader + @".+to (.{40}) of";

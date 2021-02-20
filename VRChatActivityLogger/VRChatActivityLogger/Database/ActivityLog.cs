@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace VRChatActivityLogger
+namespace VRChatActivityLogger.Database
 {
     public class ActivityLog
     {
@@ -22,6 +22,10 @@ namespace VRChatActivityLogger
         public string WorldID { get; set; }
         /// <summary>関連するワールド名</summary>
         public string WorldName { get; set; }
+        /// <summary>関連するメッセージ</summary>
+        public string Message { get; set; }
+        /// <summary>関連するURL</summary>
+        public string Url { get; set; }
 
         public override bool Equals(object obj)
         {
@@ -33,12 +37,27 @@ namespace VRChatActivityLogger
                      UserID == log.UserID &&
                      UserName == log.UserName &&
                      WorldID == log.WorldID &&
-                     WorldName == log.WorldName;
+                     WorldName == log.WorldName &&
+                     Message == log.Message &&
+                     Url == log.Url;
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(ID, ActivityType, Timestamp, NotificationID, UserID, UserName, WorldID, WorldName);
+            HashCode hash = new HashCode();
+
+            hash.Add(ID);
+            hash.Add(ActivityType);
+            hash.Add(Timestamp);
+            hash.Add(NotificationID);
+            hash.Add(UserID);
+            hash.Add(UserName);
+            hash.Add(WorldID);
+            hash.Add(WorldName);
+            hash.Add(Message);
+            hash.Add(Url);
+
+            return hash.ToHashCode();
         }
     }
 }
