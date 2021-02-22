@@ -48,14 +48,14 @@ namespace VRChatActivityLogger
             string header = @"^\d{4}\.\d{2}\.\d{2}\s\d{2}:\d{2}:\d{2}\sLog\s{8}-\s{2}";
 
             string receivedInvite = header + @"Received Notification:.+type:invite,.+$";
-            string receivedRequestInvite = header + @" Received notification:.+type:requestInvite,.+$";
+            string receivedRequestInvite = header + @"Received Notification:.+type:requestInvite,.+$";
             string sendInvite = header + @"Send notification:.+type:invite,.+$";
-            string sendRequestInvite = header + @"Send notification:.+type:requestInvite.+$";
+            string sendRequestInvite = header + @"Send notification:.+type:requestInvite,.+$";
             string joinedRoom1 = header + @"\[(RoomManager|[Ǆǅ]*)\] Joining w.+$";
             string joinedRoom2 = header + @"\[(RoomManager|[Ǆǅ]*)\] Joining or Creating Room:.+$";
             string metPlayer = header + @"\[(Player|[Ǆǅ]*)\] Initialized PlayerAPI.+$";
-            string sendFriendRequest = header + @"Send notification:.+type:friendRequest.+$";
-            string receivedFriendRequest = header + @"Received notification:.+type:friendRequest,.+$";
+            string sendFriendRequest = header + @"Send notification:.+type:friendRequest,.+$";
+            string receivedFriendRequest = header + @"Received Notification:.+type:friendRequest,.+$";
             string acceptFriendRequest = header + @"AcceptFriendRequest.+$";
 
             //ログの種類判別(一括)
@@ -76,15 +76,15 @@ namespace VRChatActivityLogger
             string detailHeader = @"^(\d{4}\.\d{2}\.\d{2}\s\d{2}:\d{2}:\d{2})\sLog\s{8}-\s{2}";
 
             string receivedInviteDetail = detailHeader + @"Received Notification: <Notification from username:(.+), sender user id:(.{40}).+ of type: invite, id: (.{40}).+worldId=(.+), worldName=(.+?)(, inviteMessage=(.+?))?(, imageUrl=(.+?))?}}, type:invite,.+$";
-            string receivedRequestInviteDetail = detailHeader + @"Received Message of type: notification content: ({{.+}}) received at";
-            string sendInviteDetail = detailHeader + @".+to (.{40}) of.+worldId=(.+), worldName=(.+)}},";
-            string sendRequestInviteDetail = detailHeader + @".+to (.{40}) of";
+            string receivedRequestInviteDetail = detailHeader + @"Received Notification: <Notification from username:(.+), sender user id:(.{40}).+ of type: requestInvite, id: (.{40}),.+{{(requestMessage=(.+?))?(, imageUrl=(.+?))??}}, type:requestInvite,.+$";
+            string sendInviteDetail = detailHeader + @"Send notification:.+sender user.+ to (.{40}).+worldId=([^,]+),.+worldName=(.+?)(, messageSlot=.+)?}}, type:invite,.+message: ""(.+)?"".+$";
+            string sendRequestInviteDetail = detailHeader + @"Send notification:.+sender user.+ to (.{40}).+type:requestInvite,.+message: ""(.+)?"".+$";
             string metPlayerDetail = detailHeader + @"\[(Player|[Ǆǅ]*)\] Initialized PlayerAPI ""(.*)"" is (remote|local)$";
             string joinedRoom1Detail = detailHeader + @"\[(RoomManager|[Ǆǅ]*)\] Joining (.+)$";
             string joinedRoom2Detail = detailHeader + @"\[(RoomManager|[Ǆǅ]*)\] Joining or Creating Room: (.+)$";
-            string sendFriendRequestDetail = detailHeader + @".+to (.{40}) of";
-            string receivedFriendRequestDetail = detailHeader + @"Received Message of type: notification content: ({{.+}}) received at";
-            string acceptFriendRequestDetail = detailHeader + @".+username:(.+), sender user id:(.{40}).+id: (.{40}),";
+            string sendFriendRequestDetail = detailHeader + @"Send notification:.+sender user.+ to (.{40}).+type:friendRequest,.+$";
+            string receivedFriendRequestDetail = detailHeader + @"Received Notification: <Notification from username:(.+), sender user id:(.{40}).+ of type: friendRequest, id: (.{40}),.+type:friendRequest,.+$";
+            string acceptFriendRequestDetail = detailHeader + @"AcceptFriendRequest Notification:<Notification from username:(.+), sender user id:(.{40}).+ of type: friendRequest, id: (.{40}),.+type:friendRequest,.+$";
 
             ReceivedInviteDetail = new Regex(receivedInviteDetail, RegexOptions.Compiled);
             ReceivedRequestInviteDetail = new Regex(receivedRequestInviteDetail, RegexOptions.Compiled);

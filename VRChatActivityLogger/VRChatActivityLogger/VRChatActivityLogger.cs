@@ -184,46 +184,68 @@ namespace VRChatActivityLogger
                         {
                             activityLog.Url = m.Groups[10].Value;
                         }
+
+                        activityLogs.Add(activityLog);
                     }
                     else if (match.Groups[PatternType.ReceivedRequestInvite].Value.Length != 0)
                     {
                         var m = RegexPatterns.ReceivedRequestInviteDetail.Match(match.ToString());
-                        var jsonRawData = m.Groups[2].Value.Replace("{{", "{").Replace("}}", "}");
-                        dynamic content = JsonConvert.DeserializeObject(jsonRawData);
                         var activityLog = new ActivityLog
                         {
                             ActivityType = ActivityType.ReceivedRequestInvite,
                             Timestamp = DateTime.Parse(m.Groups[1].Value),
-                            NotificationID = content.id,
-                            UserID = content.senderUserId,
-                            UserName = content.senderUsername,
+                            NotificationID = m.Groups[4].Value,
+                            UserID = m.Groups[3].Value,
+                            UserName = m.Groups[2].Value,
                         };
-                        if (!activityLogs.Where(a => a.NotificationID == activityLog.NotificationID).Any())
+
+                        if (m.Groups[6].Success)
                         {
-                            activityLogs.Add(activityLog);
+                            activityLog.Message = m.Groups[6].Value;
                         }
+
+                        if (m.Groups[8].Success)
+                        {
+                            activityLog.Url = m.Groups[8].Value;
+                        }
+
+                        activityLogs.Add(activityLog);
                     }
                     else if (match.Groups[PatternType.SendInvite].Value.Length != 0)
                     {
                         var m = RegexPatterns.SendInviteDetail.Match(match.ToString());
-                        activityLogs.Add(new ActivityLog
+                        var activityLog = new ActivityLog
                         {
                             ActivityType = ActivityType.SendInvite,
                             Timestamp = DateTime.Parse(m.Groups[1].Value),
                             UserID = m.Groups[2].Value,
                             WorldID = m.Groups[3].Value,
                             WorldName = m.Groups[4].Value,
-                        });
+                        };
+
+                        if (m.Groups[6].Success)
+                        {
+                            activityLog.Message = m.Groups[6].Value;
+                        }
+
+                        activityLogs.Add(activityLog);
                     }
                     else if (match.Groups[PatternType.SendRequestInvite].Value.Length != 0)
                     {
                         var m = RegexPatterns.SendRequestInviteDetail.Match(match.ToString());
-                        activityLogs.Add(new ActivityLog
+                        var activityLog = new ActivityLog
                         {
                             ActivityType = ActivityType.SendRequestInvite,
                             Timestamp = DateTime.Parse(m.Groups[1].Value),
                             UserID = m.Groups[2].Value,
-                        });
+                        };
+
+                        if (m.Groups[3].Success)
+                        {
+                            activityLog.Message = m.Groups[3].Value;
+                        }
+
+                        activityLogs.Add(activityLog);
                     }
                     else if (match.Groups[PatternType.JoinedRoom1].Value.Length != 0)
                     {
@@ -275,20 +297,16 @@ namespace VRChatActivityLogger
                     else if (match.Groups[PatternType.ReceivedFriendRequest].Value.Length != 0)
                     {
                         var m = RegexPatterns.ReceivedFriendRequestDetail.Match(match.ToString());
-                        var jsonRawData = m.Groups[2].Value.Replace("{{", "{").Replace("}}", "}");
-                        dynamic content = JsonConvert.DeserializeObject(jsonRawData);
                         var activityLog = new ActivityLog
                         {
                             ActivityType = ActivityType.ReceivedFriendRequest,
                             Timestamp = DateTime.Parse(m.Groups[1].Value),
-                            NotificationID = content.id,
-                            UserID = content.senderUserId,
-                            UserName = content.senderUsername,
+                            NotificationID = m.Groups[4].Value,
+                            UserID = m.Groups[3].Value,
+                            UserName = m.Groups[2].Value,
                         };
-                        if (!activityLogs.Where(a => a.NotificationID == activityLog.NotificationID).Any())
-                        {
-                            activityLogs.Add(activityLog);
-                        }
+
+                        activityLogs.Add(activityLog);
                     }
                     else if (match.Groups[PatternType.AcceptFriendRequest].Value.Length != 0)
                     {
