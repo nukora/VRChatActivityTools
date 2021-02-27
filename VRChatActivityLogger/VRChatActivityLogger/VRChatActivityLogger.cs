@@ -227,7 +227,7 @@ namespace VRChatActivityLogger
                             {
                                 ActivityType = ActivityType.JoinedRoom,
                                 Timestamp = DateTime.Parse(m.Groups[1].Value),
-                                WorldName = m.Groups[2].Value,
+                                WorldName = m.Groups[3].Value,
                             });
                         }
                     }
