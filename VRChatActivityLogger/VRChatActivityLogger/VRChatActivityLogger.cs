@@ -320,6 +320,54 @@ namespace VRChatActivityLogger
                             NotificationID = m.Groups[4].Value,
                         });
                     }
+                    else if (match.Groups[PatternType.ReceivedInviteResponse].Value.Length != 0)
+                    {
+                        var m = RegexPatterns.ReceivedInviteResponseDetail.Match(match.ToString());
+                        var activityLog = new ActivityLog
+                        {
+                            ActivityType = ActivityType.ReceivedInviteResponse,
+                            Timestamp = DateTime.Parse(m.Groups[1].Value),
+                            NotificationID = m.Groups[4].Value,
+                            UserName = m.Groups[2].Value,
+                            UserID = m.Groups[3].Value,
+                        };
+
+                        if (m.Groups[6].Success)
+                        {
+                            activityLog.Message = m.Groups[6].Value;
+                        }
+
+                        if (m.Groups[8].Success)
+                        {
+                            activityLog.Url = m.Groups[8].Value;
+                        }
+
+                        activityLogs.Add(activityLog);
+                    }
+                    else if (match.Groups[PatternType.ReceivedRequestInviteResponse].Value.Length != 0)
+                    {
+                        var m = RegexPatterns.ReceivedRequestInviteResponseDetail.Match(match.ToString());
+                        var activityLog = new ActivityLog
+                        {
+                            ActivityType = ActivityType.ReceivedRequestInviteResponse,
+                            Timestamp = DateTime.Parse(m.Groups[1].Value),
+                            NotificationID = m.Groups[4].Value,
+                            UserName = m.Groups[2].Value,
+                            UserID = m.Groups[3].Value,
+                        };
+
+                        if (m.Groups[6].Success)
+                        {
+                            activityLog.Message = m.Groups[6].Value;
+                        }
+
+                        if (m.Groups[8].Success)
+                        {
+                            activityLog.Url = m.Groups[8].Value;
+                        }
+
+                        activityLogs.Add(activityLog);
+                    }
                     else
                     {
                         continue;

@@ -10,34 +10,38 @@ namespace VRChatActivityLogger
     /// </summary>
     static public class PatternType
     {
-        static public string ReceivedInvite = "ReceivedInvite";
-        static public string ReceivedRequestInvite = "ReceivedRequestInvite";
-        static public string SendInvite = "SendInvite";
-        static public string SendRequestInvite = "SendRequestInvite";
-        static public string JoinedRoom1 = "JoinedRoom1";
-        static public string JoinedRoom2 = "JoinedRoom2";
-        static public string MetPlayer = "MetPlayer";
-        static public string SendFriendRequest = "SendFriendRequest";
-        static public string ReceivedFriendRequest = "ReceivedFriendRequest";
-        static public string AcceptFriendRequest = "AcceptFriendRequest";
+        public static readonly string ReceivedInvite = "ReceivedInvite";
+        public static readonly string ReceivedRequestInvite = "ReceivedRequestInvite";
+        public static readonly string SendInvite = "SendInvite";
+        public static readonly string SendRequestInvite = "SendRequestInvite";
+        public static readonly string JoinedRoom1 = "JoinedRoom1";
+        public static readonly string JoinedRoom2 = "JoinedRoom2";
+        public static readonly string MetPlayer = "MetPlayer";
+        public static readonly string SendFriendRequest = "SendFriendRequest";
+        public static readonly string ReceivedFriendRequest = "ReceivedFriendRequest";
+        public static readonly string AcceptFriendRequest = "AcceptFriendRequest";
+        public static readonly string ReceivedInviteResponse = "ReceivedInviteResponse";
+        public static readonly string ReceivedRequestInviteResponse = "ReceivedRequestInviteResponse";
     }
 
     /// <summary>
     /// 正規表現を定義するクラス
     /// </summary>
-    static public class RegexPatterns
+    public static class RegexPatterns
     {
-        static public Regex ReceivedInviteDetail { get; }
-        static public Regex ReceivedRequestInviteDetail { get; }
-        static public Regex SendInviteDetail { get; }
-        static public Regex SendRequestInviteDetail { get; }
-        static public Regex JoinedRoom1Detail { get; }
-        static public Regex JoinedRoom2Detail { get; }
-        static public Regex MetPlayerDetail { get; }
-        static public Regex SendFriendRequestDetail { get; set; }
-        static public Regex ReceivedFriendRequestDetail { get; set; }
-        static public Regex AcceptFriendRequestDetail { get; set; }
-        static public Regex All { get; }
+        public static Regex ReceivedInviteDetail { get; }
+        public static Regex ReceivedRequestInviteDetail { get; }
+        public static Regex SendInviteDetail { get; }
+        public static Regex SendRequestInviteDetail { get; }
+        public static Regex JoinedRoom1Detail { get; }
+        public static Regex JoinedRoom2Detail { get; }
+        public static Regex MetPlayerDetail { get; }
+        public static Regex SendFriendRequestDetail { get; }
+        public static Regex ReceivedFriendRequestDetail { get; }
+        public static Regex AcceptFriendRequestDetail { get; }
+        public static Regex ReceivedInviteResponseDetail { get; }
+        public static Regex ReceivedRequestInviteResponseDetail { get; }
+        public static Regex All { get; }
 
         /// <summary>
         /// コンストラクタ
@@ -57,6 +61,9 @@ namespace VRChatActivityLogger
             string sendFriendRequest = header + @"Send notification:.+type:friendRequest,.+$";
             string receivedFriendRequest = header + @"Received Notification:.+type:friendRequest,.+$";
             string acceptFriendRequest = header + @"AcceptFriendRequest.+$";
+            string receivedInviteResponse = header + @"Received Notification:.+type:inviteResponse,.+$";
+            string receivedRequestInviteResponse = header + @"Received Notification:.+type:requestInviteResponse,.+$";
+
 
             //ログの種類判別(一括)
             string all = "";
@@ -69,14 +76,16 @@ namespace VRChatActivityLogger
             all += $@"(?<MetPlayer>{metPlayer})|";
             all += $@"(?<SendFriendRequest>{sendFriendRequest})|";
             all += $@"(?<ReceivedFriendRequest>{receivedFriendRequest})|";
-            all += $@"(?<AcceptFriendRequest>{acceptFriendRequest})";
+            all += $@"(?<AcceptFriendRequest>{acceptFriendRequest})|";
+            all += $@"(?<ReceivedInviteResponse>{receivedInviteResponse})|";
+            all += $@"(?<ReceivedRequestInviteResponse>{receivedRequestInviteResponse})";
             All = new Regex(all, RegexOptions.Compiled);
 
             //ログの詳細を解析
             string detailHeader = @"^(\d{4}\.\d{2}\.\d{2}\s\d{2}:\d{2}:\d{2})\sLog\s{8}-\s{2}";
 
             string receivedInviteDetail = detailHeader + @"Received Notification: <Notification from username:(.+), sender user id:(.{40}).+ of type: invite, id: (.{40}).+worldId=(.+), worldName=(.+?)(, inviteMessage=(.+?))?(, imageUrl=(.+?))?}}, type:invite,.+$";
-            string receivedRequestInviteDetail = detailHeader + @"Received Notification: <Notification from username:(.+), sender user id:(.{40}).+ of type: requestInvite, id: (.{40}),.+{{(requestMessage=(.+?))?(, imageUrl=(.+?))??}}, type:requestInvite,.+$";
+            string receivedRequestInviteDetail = detailHeader + @"Received Notification: <Notification from username:(.+), sender user id:(.{40}).+ of type: requestInvite, id: (.{40}),.+{{(requestMessage=(.+?))?,? ?(imageUrl=(.+?))??}}, type:requestInvite,.+$";
             string sendInviteDetail = detailHeader + @"Send notification:.+sender user.+ to (.{40}).+worldId=([^,]+),.+worldName=(.+?)(, messageSlot=.+)?}}, type:invite,.+message: ""(.+)?"".+$";
             string sendRequestInviteDetail = detailHeader + @"Send notification:.+sender user.+ to (.{40}).+type:requestInvite,.+message: ""(.+)?"".+$";
             string metPlayerDetail = detailHeader + @"\[(Player|[Ǆǅ]*)\] Initialized PlayerAPI ""(.*)"" is (remote|local)$";
@@ -85,6 +94,8 @@ namespace VRChatActivityLogger
             string sendFriendRequestDetail = detailHeader + @"Send notification:.+sender user.+ to (.{40}).+type:friendRequest,.+$";
             string receivedFriendRequestDetail = detailHeader + @"Received Notification: <Notification from username:(.+), sender user id:(.{40}).+ of type: friendRequest, id: (.{40}),.+type:friendRequest,.+$";
             string acceptFriendRequestDetail = detailHeader + @"AcceptFriendRequest Notification:<Notification from username:(.+), sender user id:(.{40}).+ of type: friendRequest, id: (.{40}),.+type:friendRequest,.+$";
+            string receivedInviteResponseDetail = detailHeader + @"Received Notification: <Notification from username:(.+), sender user id:(.{40}).+ of type: inviteResponse, id: (.{40}).+{{.+?(, responseMessage=(.+?))?(, imageUrl=(.+?))?}}, type:inviteResponse,.+$";
+            string receivedRequestInviteResponseDetail = detailHeader + @"Received Notification: <Notification from username:(.+), sender user id:(.{40}).+ of type: requestInviteResponse, id: (.{40}).+{{.+?(responseMessage=(.+?))?(, imageUrl=(.+?))?}}, type:requestInviteResponse,.+$";
 
             ReceivedInviteDetail = new Regex(receivedInviteDetail, RegexOptions.Compiled);
             ReceivedRequestInviteDetail = new Regex(receivedRequestInviteDetail, RegexOptions.Compiled);
@@ -96,6 +107,8 @@ namespace VRChatActivityLogger
             SendFriendRequestDetail = new Regex(sendFriendRequestDetail, RegexOptions.Compiled);
             ReceivedFriendRequestDetail = new Regex(receivedFriendRequestDetail, RegexOptions.Compiled);
             AcceptFriendRequestDetail = new Regex(acceptFriendRequestDetail, RegexOptions.Compiled);
+            ReceivedInviteResponseDetail = new Regex(receivedInviteResponseDetail, RegexOptions.Compiled);
+            ReceivedRequestInviteResponseDetail = new Regex(receivedRequestInviteResponseDetail, RegexOptions.Compiled);
         }
     }
 }
