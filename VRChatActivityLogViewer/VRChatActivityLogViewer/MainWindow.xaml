@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VRChatActivityLogViewer"
+        xmlns:shareddb="clr-namespace:VRChatActivityToolsShared.Database;assembly=VRChatActivityToolsShared"
         mc:Ignorable="d"
         Title="VRChatActivityLogViewer" Height="650" Width="800">
 
@@ -101,28 +102,28 @@
                 <DataGrid.ItemContainerStyle>
                     <Style TargetType="DataGridRow">
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding Type}" Value="{x:Static local:ActivityType.JoinedRoom}">
+                            <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.JoinedRoom}">
                                 <Setter Property="Background" Value="Plum" />
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding Type}" Value="{x:Static local:ActivityType.SendFriendRequest}">
+                            <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.SendFriendRequest}">
                                 <Setter Property="Background" Value="LightGreen" />
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding Type}" Value="{x:Static local:ActivityType.ReceivedFriendRequest}">
+                            <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.ReceivedFriendRequest}">
                                 <Setter Property="Background" Value="LightGreen" />
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding Type}" Value="{x:Static local:ActivityType.AcceptFriendRequest}">
+                            <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.AcceptFriendRequest}">
                                 <Setter Property="Background" Value="LightGreen" />
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding Type}" Value="{x:Static local:ActivityType.ReceivedInvite}">
+                            <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.ReceivedInvite}">
                                 <Setter Property="Background" Value="LightBlue" />
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding Type}" Value="{x:Static local:ActivityType.ReceivedRequestInvite}">
+                            <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.ReceivedRequestInvite}">
                                 <Setter Property="Background" Value="LightBlue" />
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding Type}" Value="{x:Static local:ActivityType.SendInvite}">
+                            <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.SendInvite}">
                                 <Setter Property="Background" Value="SkyBlue" />
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding Type}" Value="{x:Static local:ActivityType.SendRequestInvite}">
+                            <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.SendRequestInvite}">
                                 <Setter Property="Background" Value="SkyBlue" />
                             </DataTrigger>
                         </Style.Triggers>

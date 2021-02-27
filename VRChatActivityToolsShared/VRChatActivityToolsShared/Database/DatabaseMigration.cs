@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace VRChatActivityLogger.Database
+namespace VRChatActivityToolsShared.Database
 {
     /// <summary>
     /// DBのマイグレーションを行うクラスです。

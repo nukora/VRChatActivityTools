@@ -4,12 +4,12 @@ using System.Text;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
-namespace VRChatActivityLogger.Database
+namespace VRChatActivityToolsShared.Database
 {
     /// <summary>
     /// データベースコンテキスト
     /// </summary>
-    class DatabaseContext : DbContext
+    public class DatabaseContext : DbContext
     {
         /// <summary>
         /// データベースのバージョン

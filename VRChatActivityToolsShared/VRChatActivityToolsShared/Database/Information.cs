@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace VRChatActivityLogger.Database
+namespace VRChatActivityToolsShared.Database
 {
     public class Information
     {
