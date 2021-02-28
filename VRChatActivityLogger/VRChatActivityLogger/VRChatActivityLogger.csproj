@@ -22,4 +22,29 @@
     <ProjectReference Include="..\..\VRChatActivityToolsShared\VRChatActivityToolsShared\VRChatActivityToolsShared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Batch\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ContentWithTargetPath Include="Batch\add-taskschedular.bat">
+      <TargetPath>add-taskschedular.bat</TargetPath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </ContentWithTargetPath>
+      <ContentWithTargetPath Include="Batch\delete-taskschedular.bat">
+      <TargetPath>delete-taskschedular.bat</TargetPath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Batch\task.xml">
+      <TargetPath>task.xml</TargetPath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </ContentWithTargetPath>
+  </ItemGroup>
+
 </Project>
