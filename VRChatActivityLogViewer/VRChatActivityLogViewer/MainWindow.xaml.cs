@@ -94,7 +94,7 @@ namespace VRChatActivityLogViewer
             }
             catch (Exception)
             {
-                MessageBox.Show("エラーが発生しました。プログラムを終了します。", "VRChatActivityLogViewer");
+                MessageBox.Show("エラーが発生しました。プログラムを終了します。", "VRChatActivityLogViewer", MessageBoxButton.OK, MessageBoxImage.Error);
                 Application.Current.Shutdown();
             }
         }
@@ -134,17 +134,17 @@ namespace VRChatActivityLogViewer
                         }
                     }
 
-                    MessageBox.Show("VRChatログの解析に失敗しました。", "VRChatActivityLogViewer");
+                    MessageBox.Show("VRChatログの解析に失敗しました。", "VRChatActivityLogViewer", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (System.ComponentModel.Win32Exception)
             {
-                MessageBox.Show("VRChatActivityLogger.exeが見つかりませんでした。", "VRChatActivityLogViewer");
+                MessageBox.Show("VRChatActivityLogger.exeが見つかりませんでした。", "VRChatActivityLogViewer", MessageBoxButton.OK, MessageBoxImage.Error);
                 DisableProcessingMode();
             }
             catch (Exception)
             {
-                MessageBox.Show("エラーが発生しました。プログラムを終了します。", "VRChatActivityLogViewer");
+                MessageBox.Show("エラーが発生しました。プログラムを終了します。", "VRChatActivityLogViewer", MessageBoxButton.OK, MessageBoxImage.Error);
                 Application.Current.Shutdown();
             }
         }
