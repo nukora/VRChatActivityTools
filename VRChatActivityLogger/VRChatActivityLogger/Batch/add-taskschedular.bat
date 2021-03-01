@@ -9,4 +9,7 @@ for /f "delims=" %%a in (task.xml) do (
 
 schtasks /Create /F /XML task_actual.xml /TN VRChatActivityLogger
 del task_actual.xml
-PAUSE
+
+if not "%1" == "/c" (
+  PAUSE
+)

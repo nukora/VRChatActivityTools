@@ -27,140 +27,163 @@
         </Style>
     </Window.Resources>
 
-    <Grid Margin="10">
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
+            <RowDefinition Height="19"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" FontSize="36">VRChatActivityLogViewer</Label>
-        
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <Grid Grid.Column="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="22"/>
-                    <RowDefinition Height="22"/>
-                    <RowDefinition Height="22"/>
-                    <RowDefinition Height="22"/>
-                    <RowDefinition Height="30"/>
-                </Grid.RowDefinitions>
-                <StackPanel Grid.Row="0" Orientation="Horizontal">
-                    <TextBlock Width="50" TextAlignment="Right" Margin="0,0,10,0" ></TextBlock>
-                    <CheckBox x:Name="joinCheckBox" Content="Join" IsChecked="True" Padding="4,-1,4,0"/>
-                    <CheckBox x:Name="meetCheckBox" Content="Meet" IsChecked="True" Padding="4,-1,4,0"/>
-                </StackPanel>
-                <StackPanel Grid.Row="1" Orientation="Horizontal">
-                    <TextBlock Width="50" TextAlignment="Right" Margin="0,0,10,0" >Send</TextBlock>
-                    <CheckBox x:Name="sendInvCheckBox" Content="Invite" IsChecked="True" Padding="4,-1,4,0"/>
-                    <CheckBox x:Name="sendReqInvCheckBox" Content="Request Invite" IsChecked="True" Padding="4,-1,4,0"/>
-                    <CheckBox x:Name="sendFriendReqCheckBox" Content="Friend Request" IsChecked="True" Padding="4,-1,4,0"/>
-                </StackPanel>
-                <StackPanel Grid.Row="2" Orientation="Horizontal">
-                    <TextBlock Width="50" TextAlignment="Right" Margin="0,0,10,0" >Received</TextBlock>
-                    <CheckBox x:Name="recvInvCheckBox" Content="Invite" IsChecked="True" Padding="4,-1,4,0"/>
-                    <CheckBox x:Name="recvReqInvCheckBox" Content="Request Invite" IsChecked="True" Padding="4,-1,4,0"/>
-                    <CheckBox x:Name="recvFriendReqCheckBox" Content="Friend Request" IsChecked="True" Padding="4,-1,4,0"/>
-                </StackPanel>
-                <StackPanel Grid.Row="3" Orientation="Horizontal">
-                    <TextBlock Width="50" TextAlignment="Right" Margin="0,0,10,0" >Accept</TextBlock>
-                    <CheckBox x:Name="acptFriendReqCheckBox" Content="Friend Request" IsChecked="True" Padding="4,-1,4,0"/>
-                </StackPanel>
-                <StackPanel Grid.Row="4" Orientation="Horizontal">
-                    <TextBlock Width="50" TextAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" >Period</TextBlock>
-                    <DatePicker x:Name="fromDatePicker" Margin="3" />
-                    <Label Margin="0,3,0,0">～</Label>
-                    <DatePicker x:Name="untilDatePicker" Margin="3" />
-                </StackPanel>
-            </Grid>
-            <Grid Grid.Column="1">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="30" />
-                </Grid.RowDefinitions>
-                <StackPanel Grid.Row="1" Orientation="Horizontal">
-                    <TextBlock Width="50" TextAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" >Keyword</TextBlock>
-                    <TextBox x:Name="keywordBox" Width="100" Margin="0,3" VerticalContentAlignment="Center" KeyDown="keywordBox_KeyDown"/>
-                </StackPanel>
-            </Grid>
-            <Grid Grid.Column="2" HorizontalAlignment="Right">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="25"/>
-                    <RowDefinition Height="90"/>
-                </Grid.RowDefinitions>
-                <Button Grid.Row="0" x:Name="loggerButton" Width="120" Margin="3,3,3,0" Click="loggerButton_Click">Logger</Button>
-                <Button Grid.Row="1" x:Name="searchButton" Width="120" Margin="3" Click="searchButton_Click">Search</Button>
-            </Grid>
-        </Grid>
 
-        <Border Grid.Row="2" BorderBrush="Silver" BorderThickness="1">
-            <DataGrid x:Name="ActivityLogGrid" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" RowHeight="30" CellStyle="{StaticResource Body_Content_DataGrid_Centering}" >
-                <DataGrid.ItemContainerStyle>
-                    <Style TargetType="DataGridRow">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.JoinedRoom}">
-                                <Setter Property="Background" Value="Plum" />
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.SendFriendRequest}">
-                                <Setter Property="Background" Value="LightGreen" />
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.ReceivedFriendRequest}">
-                                <Setter Property="Background" Value="LightGreen" />
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.AcceptFriendRequest}">
-                                <Setter Property="Background" Value="LightGreen" />
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.ReceivedInvite}">
-                                <Setter Property="Background" Value="LightBlue" />
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.ReceivedRequestInvite}">
-                                <Setter Property="Background" Value="LightBlue" />
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.SendInvite}">
-                                <Setter Property="Background" Value="SkyBlue" />
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.SendRequestInvite}">
-                                <Setter Property="Background" Value="SkyBlue" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </DataGrid.ItemContainerStyle>
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="TimeStamp" Binding="{Binding TimeStamp, StringFormat=yyyy/MM/dd HH:mm:ss}" />
-                    <DataGridTextColumn Header="ActivityName" Binding="{Binding ActivityName}">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="HorizontalAlignment" Value="Center"/>
-                                <Setter Property="FontWeight" Value="Bold" />
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="Content" Binding="{Binding Content}" />
-                    <DataGridTemplateColumn Header="Action">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <Button Content="Join" Width="64" Tag="{Binding}" Click="JoinButton_Click" Visibility="{Binding IsCopyableWorldID, Converter={StaticResource BoolVisibilityConverter}}" Margin="5" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Copy ID">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <Button Content="World ID" Width="64" Tag="{Binding}" Click="CopyWorldIDButton_Click" Visibility="{Binding IsCopyableWorldID, Converter={StaticResource BoolVisibilityConverter}}" Margin="5" />
-                                    <Button Content="User ID" Width="64" Tag="{Binding}" Click="CopyUserIDButton_Click" Visibility="{Binding IsCopyableUserID, Converter={StaticResource BoolVisibilityConverter}}" Margin="5" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-            </DataGrid>
-        </Border>
+        <Menu Grid.Row="0" Background="White">
+            <MenuItem Header="_File">
+                <MenuItem Header="Exit" Click="ExitMenuItem_Click"/>
+            </MenuItem>
+            <MenuItem Header="_Tools">
+                <MenuItem Header="TaskScheduler">
+                    <MenuItem Header="Register" Click="RegisterTaskSchedulerMenuItem_Click"/>
+                    <MenuItem Header="Unregister" Click="UnregisterTaskSchedulerMenuItem_Click"/>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="_Help">
+                <MenuItem Header="About" Click="AboutMenuItem_Click"/>
+            </MenuItem>
+        </Menu>
+
+        <Grid Grid.Row="1" Margin="10,0,10,10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <Label Grid.Row="0" FontSize="36">VRChatActivityLogViewer</Label>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="22"/>
+                        <RowDefinition Height="22"/>
+                        <RowDefinition Height="22"/>
+                        <RowDefinition Height="22"/>
+                        <RowDefinition Height="30"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0" Orientation="Horizontal">
+                        <TextBlock Width="50" TextAlignment="Right" Margin="0,0,10,0" ></TextBlock>
+                        <CheckBox x:Name="joinCheckBox" Content="Join" IsChecked="True" Padding="4,-1,4,0"/>
+                        <CheckBox x:Name="meetCheckBox" Content="Meet" IsChecked="True" Padding="4,-1,4,0"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Orientation="Horizontal">
+                        <TextBlock Width="50" TextAlignment="Right" Margin="0,0,10,0" >Send</TextBlock>
+                        <CheckBox x:Name="sendInvCheckBox" Content="Invite" IsChecked="True" Padding="4,-1,4,0"/>
+                        <CheckBox x:Name="sendReqInvCheckBox" Content="Request Invite" IsChecked="True" Padding="4,-1,4,0"/>
+                        <CheckBox x:Name="sendFriendReqCheckBox" Content="Friend Request" IsChecked="True" Padding="4,-1,4,0"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="2" Orientation="Horizontal">
+                        <TextBlock Width="50" TextAlignment="Right" Margin="0,0,10,0" >Received</TextBlock>
+                        <CheckBox x:Name="recvInvCheckBox" Content="Invite" IsChecked="True" Padding="4,-1,4,0"/>
+                        <CheckBox x:Name="recvReqInvCheckBox" Content="Request Invite" IsChecked="True" Padding="4,-1,4,0"/>
+                        <CheckBox x:Name="recvFriendReqCheckBox" Content="Friend Request" IsChecked="True" Padding="4,-1,4,0"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="3" Orientation="Horizontal">
+                        <TextBlock Width="50" TextAlignment="Right" Margin="0,0,10,0" >Accept</TextBlock>
+                        <CheckBox x:Name="acptFriendReqCheckBox" Content="Friend Request" IsChecked="True" Padding="4,-1,4,0"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="4" Orientation="Horizontal">
+                        <TextBlock Width="50" TextAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" >Period</TextBlock>
+                        <DatePicker x:Name="fromDatePicker" Margin="3" />
+                        <Label Margin="0,3,0,0">～</Label>
+                        <DatePicker x:Name="untilDatePicker" Margin="3" />
+                    </StackPanel>
+                </Grid>
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="30" />
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="1" Orientation="Horizontal">
+                        <TextBlock Width="50" TextAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" >Keyword</TextBlock>
+                        <TextBox x:Name="keywordBox" Width="100" Margin="0,3" VerticalContentAlignment="Center" KeyDown="keywordBox_KeyDown"/>
+                    </StackPanel>
+                </Grid>
+                <Grid Grid.Column="2" HorizontalAlignment="Right">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="90"/>
+                    </Grid.RowDefinitions>
+                    <Button Grid.Row="0" x:Name="loggerButton" Width="120" Margin="3,3,3,0" Click="loggerButton_Click">Logger</Button>
+                    <Button Grid.Row="1" x:Name="searchButton" Width="120" Margin="3" Click="searchButton_Click">Search</Button>
+                </Grid>
+            </Grid>
+
+            <Border Grid.Row="2" BorderBrush="Silver" BorderThickness="1">
+                <DataGrid x:Name="ActivityLogGrid" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" RowHeight="30" CellStyle="{StaticResource Body_Content_DataGrid_Centering}" >
+                    <DataGrid.ItemContainerStyle>
+                        <Style TargetType="DataGridRow">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.JoinedRoom}">
+                                    <Setter Property="Background" Value="Plum" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.SendFriendRequest}">
+                                    <Setter Property="Background" Value="LightGreen" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.ReceivedFriendRequest}">
+                                    <Setter Property="Background" Value="LightGreen" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.AcceptFriendRequest}">
+                                    <Setter Property="Background" Value="LightGreen" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.ReceivedInvite}">
+                                    <Setter Property="Background" Value="LightBlue" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.ReceivedRequestInvite}">
+                                    <Setter Property="Background" Value="LightBlue" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.SendInvite}">
+                                    <Setter Property="Background" Value="SkyBlue" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.SendRequestInvite}">
+                                    <Setter Property="Background" Value="SkyBlue" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.ItemContainerStyle>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="TimeStamp" Binding="{Binding TimeStamp, StringFormat=yyyy/MM/dd HH:mm:ss}" />
+                        <DataGridTextColumn Header="ActivityName" Binding="{Binding ActivityName}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    <Setter Property="FontWeight" Value="Bold" />
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Content" Binding="{Binding Content}" />
+                        <DataGridTemplateColumn Header="Action">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Content="Join" Width="64" Tag="{Binding}" Click="JoinButton_Click" Visibility="{Binding IsCopyableWorldID, Converter={StaticResource BoolVisibilityConverter}}" Margin="5" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Copy ID">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Content="World ID" Width="64" Tag="{Binding}" Click="CopyWorldIDButton_Click" Visibility="{Binding IsCopyableWorldID, Converter={StaticResource BoolVisibilityConverter}}" Margin="5" />
+                                        <Button Content="User ID" Width="64" Tag="{Binding}" Click="CopyUserIDButton_Click" Visibility="{Binding IsCopyableUserID, Converter={StaticResource BoolVisibilityConverter}}" Margin="5" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+        </Grid>
     </Grid>
 </Window>

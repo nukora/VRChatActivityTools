@@ -1,3 +1,5 @@
 @echo off
 schtasks /Delete /F /TN VRChatActivityLogger
-PAUSE
+if not "%1" == "/c" (
+  PAUSE
+)
