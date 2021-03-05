@@ -6,31 +6,34 @@ namespace VRChatActivityLogViewer
     /// <summary>
     /// DataGridに表示するモデル
     /// </summary>
-    class ActivityLogGridModel
+    public class ActivityLogGridModel
     {
         /// <summary>タイムスタンプ</summary>
-        public DateTime TimeStamp { get; set; }
+        public DateTime TimeStamp { get; }
 
         /// <summary>アクティビティの種類の名前</summary>
-        public string ActivityName { get; set; }
+        public string ActivityName { get; }
 
         /// <summary>アクティビティの種類</summary>
-        public ActivityType Type { get; set; }
+        public ActivityType Type { get; }
 
         /// <summary>アクティビティの内容</summary>
-        public string Content { get; set; }
+        public string Content { get; }
 
         /// <summary>ワールドIDがコピーできるか</summary>
-        public bool IsCopyableWorldID { get; set; } = false;
+        public bool IsCopyableWorldID { get; } = false;
 
         /// <summary>ユーザIDがコピーできるか</summary>
-        public bool IsCopyableUserID { get; set; } = false;
+        public bool IsCopyableUserID { get; } = false;
 
         /// <summary>ワールドID</summary>
-        public string WorldID { get; set; }
+        public string WorldID { get; }
 
         /// <summary>ユーザID</summary>
-        public string UserID { get; set; }
+        public string UserID { get; }
+
+        /// <summary>元データ</summary>
+        public ActivityLog Source { get; }
 
         /// <summary>
         /// コンストラクタ
@@ -38,6 +41,8 @@ namespace VRChatActivityLogViewer
         /// <param name="activityLog"></param>
         public ActivityLogGridModel(ActivityLog activityLog)
         {
+            Source = activityLog;
+
             Type = activityLog.ActivityType;
             TimeStamp = activityLog.Timestamp ?? default;
             if (activityLog.ActivityType == ActivityType.JoinedRoom)
@@ -99,6 +104,20 @@ namespace VRChatActivityLogViewer
             if (activityLog.ActivityType == ActivityType.AcceptFriendRequest)
             {
                 ActivityName = "Accept FriendRequest";
+                Content = activityLog.UserName;
+                UserID = activityLog.UserID;
+                IsCopyableUserID = true;
+            }
+            if (activityLog.ActivityType == ActivityType.ReceivedInviteResponse)
+            {
+                ActivityName = "Received InviteResponse";
+                Content = activityLog.UserName;
+                UserID = activityLog.UserID;
+                IsCopyableUserID = true;
+            }
+            if (activityLog.ActivityType == ActivityType.ReceivedRequestInviteResponse)
+            {
+                ActivityName = "Received RequestInviteResponse";
                 Content = activityLog.UserName;
                 UserID = activityLog.UserID;
                 IsCopyableUserID = true;

@@ -38,6 +38,10 @@ namespace VRChatActivityLogViewer
                     searchActivityTypes.Add(ActivityType.ReceivedFriendRequest);
                 if (parameter.IsAcceptFriendRequest)
                     searchActivityTypes.Add(ActivityType.AcceptFriendRequest);
+                if (parameter.IsReceivedInviteResponse)
+                    searchActivityTypes.Add(ActivityType.ReceivedInviteResponse);
+                if (parameter.IsReceivedRequestInviteResponse)
+                    searchActivityTypes.Add(ActivityType.ReceivedRequestInviteResponse);
 
                 List<ActivityLog> activityLogs = new List<ActivityLog>();
                 using (var db = new DatabaseContext())

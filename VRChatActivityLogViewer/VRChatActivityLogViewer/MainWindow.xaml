@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:VRChatActivityLogViewer"
         xmlns:shareddb="clr-namespace:VRChatActivityToolsShared.Database;assembly=VRChatActivityToolsShared"
         mc:Ignorable="d"
-        Title="VRChatActivityLogViewer" Height="650" Width="800">
+        Title="VRChatActivityLogViewer" Height="700" Width="800" WindowStartupLocation="CenterScreen">
 
     <Window.TaskbarItemInfo>
         <TaskbarItemInfo x:Name="taskbarInfo"/>
@@ -69,6 +69,7 @@
                         <RowDefinition Height="22"/>
                         <RowDefinition Height="22"/>
                         <RowDefinition Height="22"/>
+                        <RowDefinition Height="22"/>
                         <RowDefinition Height="30"/>
                     </Grid.RowDefinitions>
                     <StackPanel Grid.Row="0" Orientation="Horizontal">
@@ -89,10 +90,15 @@
                         <CheckBox x:Name="recvFriendReqCheckBox" Content="Friend Request" IsChecked="True" Padding="4,-1,4,0"/>
                     </StackPanel>
                     <StackPanel Grid.Row="3" Orientation="Horizontal">
+                        <TextBlock Width="50" TextAlignment="Right" Margin="0,0,10,0" ></TextBlock>
+                        <CheckBox x:Name="recvInvResCheckBox" Content="Invite Response" IsChecked="True" Padding="4,-1,4,0"/>
+                        <CheckBox x:Name="recvReqInvResCheckBox" Content="Request Invite Response" IsChecked="True" Padding="4,-1,4,0"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="4" Orientation="Horizontal">
                         <TextBlock Width="50" TextAlignment="Right" Margin="0,0,10,0" >Accept</TextBlock>
                         <CheckBox x:Name="acptFriendReqCheckBox" Content="Friend Request" IsChecked="True" Padding="4,-1,4,0"/>
                     </StackPanel>
-                    <StackPanel Grid.Row="4" Orientation="Horizontal">
+                    <StackPanel Grid.Row="5" Orientation="Horizontal">
                         <TextBlock Width="50" TextAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" >Period</TextBlock>
                         <DatePicker x:Name="fromDatePicker" Margin="3" />
                         <Label Margin="0,3,0,0">～</Label>
@@ -148,6 +154,12 @@
                                 <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.SendRequestInvite}">
                                     <Setter Property="Background" Value="SkyBlue" />
                                 </DataTrigger>
+                                <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.ReceivedInviteResponse}">
+                                    <Setter Property="Background" Value="LightBlue" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.ReceivedRequestInviteResponse}">
+                                    <Setter Property="Background" Value="LightBlue" />
+                                </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </DataGrid.ItemContainerStyle>
@@ -162,21 +174,11 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
                         <DataGridTextColumn Header="Content" Binding="{Binding Content}" />
-                        <DataGridTemplateColumn Header="Action">
+                        <DataGridTemplateColumn Header="Detail">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <Button Content="Join" Width="64" Tag="{Binding}" Click="JoinButton_Click" Visibility="{Binding IsCopyableWorldID, Converter={StaticResource BoolVisibilityConverter}}" Margin="5" />
-                                    </StackPanel>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Header="Copy ID">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Button Content="World ID" Width="64" Tag="{Binding}" Click="CopyWorldIDButton_Click" Visibility="{Binding IsCopyableWorldID, Converter={StaticResource BoolVisibilityConverter}}" Margin="5" />
-                                        <Button Content="User ID" Width="64" Tag="{Binding}" Click="CopyUserIDButton_Click" Visibility="{Binding IsCopyableUserID, Converter={StaticResource BoolVisibilityConverter}}" Margin="5" />
+                                        <Button Content="Detail" Width="64" Tag="{Binding}" Click="DetailButton_Click" Margin="5" />
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>

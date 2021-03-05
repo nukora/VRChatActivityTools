@@ -39,5 +39,11 @@ namespace VRChatActivityLogViewer
 
         /// <summary>検索する期間の終わり</summary>
         public DateTime? UntilDateTime { get; set; } = null;
+
+        /// <summary>inviteへの返信を受け取った履歴を含める</summary>
+        public bool IsReceivedInviteResponse { get; set; } = true;
+
+        /// <summary>reqInvへの返信を受け取った履歴を含める</summary>
+        public bool IsReceivedRequestInviteResponse { get; set; } = true;
     }
 }

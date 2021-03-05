@@ -1,0 +1,46 @@
+﻿<Window x:Class="VRChatActivityLogViewer.DetailWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:VRChatActivityLogViewer"
+        mc:Ignorable="d"
+        Loaded="DetailWindow_Loaded"
+        Title="VRChatActivityViewer" Height="360" Width="500">
+    <Grid>
+        <StackPanel Margin="10">
+            <Grid x:Name="HeaderGrid" Height="55" Margin="5">
+                <TextBlock x:Name="ActivityTypeText" Margin="10,0,0,0" Text="ActivityType" FontSize="32" FontWeight="Bold" VerticalAlignment="Center">
+                    <TextBlock.Effect>
+                        <DropShadowEffect ShadowDepth="0" Direction="0" Color="White" Opacity="1" BlurRadius="4"/>
+                    </TextBlock.Effect>
+                </TextBlock>
+            </Grid>
+            <Grid x:Name="TimestampGrid" Height="30" Margin="5,0,0,5">
+                <TextBlock x:Name="TimestampText" Margin="10,0,0,0" Text="2000/01/01 00:00:00" FontSize="16" VerticalAlignment="Center"/>
+            </Grid>
+            <Grid x:Name="ImageGrid" MinHeight="140" Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="1.5*"/>
+                </Grid.ColumnDefinitions>
+                <Image x:Name="ImageContent" Grid.Column="0" Stretch="Uniform" Margin="5" />
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock x:Name="WorldNameText" Grid.Row="0" Text="World Name" FontSize="24" Margin="15,15,15,0" TextWrapping="Wrap"/>
+                    <TextBlock x:Name="WorldAuthorText" Grid.Row="1" Text="" FontSize="16" Margin="15,0,15,0" TextWrapping="Wrap"/>
+                </Grid>
+            </Grid>
+            <Grid x:Name="ActionGrid" Height="40" Margin="5">
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="JoinButton" Content="Join" Margin="5" Width="100"/>
+                    <Button x:Name="CopyWorldIdButton" Content="Copy World ID" Margin="5" Width="100"/>
+                    <Button x:Name="CopyUserIdButton" Content="Copy User ID" Margin="5" Width="100"/>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -67,6 +67,8 @@ namespace VRChatActivityLogViewer
                     IsAcceptFriendRequest = acptFriendReqCheckBox.IsChecked ?? false,
                     FromDateTime = fromDatePicker.SelectedDate,
                     UntilDateTime = untilDatePicker.SelectedDate?.AddDays(1),
+                    IsReceivedInviteResponse = recvInvResCheckBox.IsChecked ?? false,
+                    IsReceivedRequestInviteResponse = recvReqInvResCheckBox.IsChecked ?? false,
                 };
                 var activityLogs = await VRChatActivityLogModel.SearchActivityLogs(parameter);
 
@@ -195,6 +197,24 @@ namespace VRChatActivityLogViewer
                     var uri = "vrchat://launch?id=" + tag.WorldID;
                     uri = uri.Replace("&", "^&");
                     Process.Start(new ProcessStartInfo("cmd", $"/c start {uri}") { CreateNoWindow = true });
+                }
+            }
+        }
+
+        /// <summary>
+        /// Detailボタンクリック時のイベント
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DetailButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button)
+            {
+                if (button.Tag is ActivityLogGridModel tag)
+                {
+                    var dialog = new DetailWindow(tag.Source);
+                    dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                    dialog.Show();
                 }
             }
         }
