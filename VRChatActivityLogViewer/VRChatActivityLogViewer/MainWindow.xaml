@@ -178,7 +178,7 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <Button Content="Detail" Width="64" Tag="{Binding}" Click="DetailButton_Click" Margin="5" />
+                                        <Button Content="Detail" Width="64" Tag="{Binding}" Click="DetailButton_Click" Visibility="{Binding IsDetailWindowEnabled, Converter={StaticResource BoolVisibilityConverter}}" Margin="5" />
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>

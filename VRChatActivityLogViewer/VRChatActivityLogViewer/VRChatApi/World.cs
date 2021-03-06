@@ -24,10 +24,10 @@ namespace VRChatActivityLogViewer.VRChatApi
         public string Organization { get; set; }
         public string PreviewYoutubeId { get; set; }
         public int Favorites { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
-        public DateTime PublicationDate { get; set; }
-        public DateTime LabsPublicationDate { get; set; }
+        public string CreatedAt { get; set; }
+        public string UpdatedAt { get; set; }
+        public string PublicationDate { get; set; }
+        public string LabsPublicationDate { get; set; }
         public int Visits { get; set; }
         public int Popularity { get; set; }
         public int Heat { get; set; }

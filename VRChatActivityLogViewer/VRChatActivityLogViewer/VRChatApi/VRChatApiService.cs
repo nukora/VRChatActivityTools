@@ -48,8 +48,8 @@ namespace VRChatActivityLogViewer.VRChatApi
             
             if (response.IsSuccessStatusCode)
             {
-                var json = await response.Content.ReadAsStreamAsync();
-                var world = await JsonSerializer.DeserializeAsync<World>(json, jsonSerializerOptions);
+                var json = await response.Content.ReadAsStringAsync();
+                var world = JsonSerializer.Deserialize<World>(json, jsonSerializerOptions);
 
                 return world;
             }

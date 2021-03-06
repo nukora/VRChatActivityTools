@@ -6,41 +6,87 @@
         xmlns:local="clr-namespace:VRChatActivityLogViewer"
         mc:Ignorable="d"
         Loaded="DetailWindow_Loaded"
-        Title="VRChatActivityViewer" Height="360" Width="500">
+        Title="VRChatActivityViewer" Height="360" Width="500" ResizeMode="NoResize">
     <Grid>
-        <StackPanel Margin="10">
-            <Grid x:Name="HeaderGrid" Height="55" Margin="5">
-                <TextBlock x:Name="ActivityTypeText" Margin="10,0,0,0" Text="ActivityType" FontSize="32" FontWeight="Bold" VerticalAlignment="Center">
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="160"/>
+                <RowDefinition Height="50"/>
+            </Grid.RowDefinitions>
+            <Grid x:Name="HeaderGrid" Grid.Row="0" Margin="5">
+                <TextBlock x:Name="ActivityTypeText" Margin="10,0,0,0" Text="ActivityType" FontSize="28" FontWeight="Bold" VerticalAlignment="Center">
                     <TextBlock.Effect>
                         <DropShadowEffect ShadowDepth="0" Direction="0" Color="White" Opacity="1" BlurRadius="4"/>
                     </TextBlock.Effect>
                 </TextBlock>
             </Grid>
-            <Grid x:Name="TimestampGrid" Height="30" Margin="5,0,0,5">
-                <TextBlock x:Name="TimestampText" Margin="10,0,0,0" Text="2000/01/01 00:00:00" FontSize="16" VerticalAlignment="Center"/>
+            <Grid x:Name="TimestampGrid" Grid.Row="1" Margin="5,0,0,5">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock x:Name="TimestampText" Margin="10,0,0,0" Text="2000/01/01 00:00:00" FontSize="16" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="FromUserName" Margin="10,0,0,0" Text="" FontSize="16" VerticalAlignment="Center"/>
+                </StackPanel>
             </Grid>
-            <Grid x:Name="ImageGrid" MinHeight="140" Margin="5">
+            <Grid x:Name="WorldInfoGrid" Grid.Row="2" Margin="5" Visibility="Hidden">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="1.5*"/>
+                    <ColumnDefinition Width="1.6*"/>
                 </Grid.ColumnDefinitions>
-                <Image x:Name="ImageContent" Grid.Column="0" Stretch="Uniform" Margin="5" />
-                <Grid Grid.Column="1">
+                <Grid Grid.Row="0" Grid.Column="0">
+                    <TextBlock Text="World Information" FontSize="16" Margin="5,0,0,0" Foreground="Gray" VerticalAlignment="Bottom"/>
+                </Grid>
+                <Grid Grid.Row="1" Grid.Column="0" Margin="5,0,5,5">
+                    <TextBlock Text="&#xE8B9;" FontFamily="Segoe MDL2 Assets" FontSize="64" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Image x:Name="WorldImageContent" Stretch="Uniform"/>
+                </Grid>
+                <Grid Grid.Row="1" Grid.Column="1">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <TextBlock x:Name="WorldNameText" Grid.Row="0" Text="World Name" FontSize="24" Margin="15,15,15,0" TextWrapping="Wrap"/>
+                    <TextBlock x:Name="WorldNameText" Grid.Row="0" FontSize="24" Margin="15,15,15,0" TextWrapping="Wrap"/>
                     <TextBlock x:Name="WorldAuthorText" Grid.Row="1" Text="" FontSize="16" Margin="15,0,15,0" TextWrapping="Wrap"/>
+                    <Button x:Name="ChangeMessageInfoButton" Grid.Row="2" Content="Show Message Info" Margin="5" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="ChangeMessageInfoButton_Click" Visibility="Hidden"/>
                 </Grid>
             </Grid>
-            <Grid x:Name="ActionGrid" Height="40" Margin="5">
+            <Grid x:Name="MessageInfoGrid" Grid.Row="2" Margin="5" Visibility="Hidden">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="1.6*"/>
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Row="0" Grid.Column="0">
+                    <TextBlock Text="Message Information" FontSize="16" Margin="5,0,0,0" Foreground="Gray" VerticalAlignment="Bottom"/>
+                </Grid>
+                <Grid Grid.Row="1" Grid.Column="0" Margin="5,0,5,5">
+                    <TextBlock Text="&#xE8B9;" FontFamily="Segoe MDL2 Assets" FontSize="64" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Image x:Name="MessageImageContent" Stretch="Uniform"/>
+                </Grid>
+                <Grid Grid.Row="1" Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock x:Name="MessageText" Grid.Row="0" FontSize="18" Margin="15,15,15,0" TextWrapping="Wrap"/>
+                    <Button x:Name="ChangeWorldInfoButton" Grid.Row="2" Content="Show World Info" Margin="5" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="ChangeWorldInfoButton_Click" Visibility="Hidden"/>
+                </Grid>
+            </Grid>
+            <Grid x:Name="ActionGrid" Grid.Row="3" Margin="5">
                 <StackPanel Orientation="Horizontal">
-                    <Button x:Name="JoinButton" Content="Join" Margin="5" Width="100"/>
-                    <Button x:Name="CopyWorldIdButton" Content="Copy World ID" Margin="5" Width="100"/>
-                    <Button x:Name="CopyUserIdButton" Content="Copy User ID" Margin="5" Width="100"/>
+                    <Button x:Name="JoinButton" Content="Join" Margin="5" Width="100" Click="JoinButton_Click"/>
+                    <Button x:Name="CopyWorldIdButton" Content="Copy World ID" Margin="5" Width="100" Click="CopyWorldIdButton_Click"/>
+                    <Button x:Name="CopyUserIdButton" Content="Copy User ID" Margin="5" Width="100" Click="CopyUserIdButton_Click"/>
                 </StackPanel>
             </Grid>
-        </StackPanel>
+        </Grid>
     </Grid>
 </Window>

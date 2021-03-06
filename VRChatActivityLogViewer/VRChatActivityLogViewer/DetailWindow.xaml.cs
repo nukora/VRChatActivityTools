@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -23,6 +25,7 @@ namespace VRChatActivityLogViewer
         private ActivityLog activityLog;
         private VRChatApiService vrchatApiService;
         private WebService webService;
+        private World world;
 
         /// <summary>
         /// コンストラクタ
@@ -32,18 +35,79 @@ namespace VRChatActivityLogViewer
         {
             InitializeComponent();
 
+            this.activityLog = activityLog;
+
             vrchatApiService = new VRChatApiService();
             webService = new WebService();
 
-            this.activityLog = activityLog;
+            InitializeView();
+        }
 
+        /// <summary>
+        /// 表示する内容を初期化します
+        /// </summary>
+        private void InitializeView()
+        {
+            // ボタンの有効/無効
+            JoinButton.Visibility = activityLog.WorldID != null ? Visibility.Visible : Visibility.Collapsed;
+            CopyWorldIdButton.Visibility = activityLog.WorldID != null ? Visibility.Visible : Visibility.Collapsed;
+            CopyUserIdButton.Visibility = activityLog.UserID != null ? Visibility.Visible : Visibility.Collapsed;
+
+            // アクティビティタイプとタイムスタンプ
             ActivityTypeText.Text = ActivityTypeToString(activityLog.ActivityType);
             TimestampText.Text = activityLog.Timestamp?.ToString("yyyy/MM/dd HH:mm:ss");
 
+            // アクティビティタイプによって表示内容を変更
             if (activityLog.ActivityType == ActivityType.JoinedRoom)
             {
                 HeaderGrid.Background = new SolidColorBrush(Colors.Plum);
+            }
+
+            if (activityLog.ActivityType == ActivityType.ReceivedInvite ||
+                activityLog.ActivityType == ActivityType.ReceivedInviteResponse ||
+                activityLog.ActivityType == ActivityType.ReceivedRequestInvite ||
+                activityLog.ActivityType == ActivityType.ReceivedRequestInviteResponse)
+            {
+                HeaderGrid.Background = new SolidColorBrush(Colors.LightBlue);
+                FromUserName.Text = $"from {activityLog.UserName}";
+            }
+
+            if (activityLog.ActivityType == ActivityType.SendInvite ||
+                activityLog.ActivityType == ActivityType.SendRequestInvite)
+            {
+                HeaderGrid.Background = new SolidColorBrush(Colors.SkyBlue);
+            }
+
+            if (activityLog.ActivityType == ActivityType.SendFriendRequest)
+            {
+                HeaderGrid.Background = new SolidColorBrush(Colors.LightGreen);
+            }
+
+            if (activityLog.ActivityType == ActivityType.ReceivedFriendRequest ||
+                activityLog.ActivityType == ActivityType.AcceptFriendRequest)
+            {
+                HeaderGrid.Background = new SolidColorBrush(Colors.LightGreen);
+                FromUserName.Text = $"from {activityLog.UserName}";
+            }
+
+            // ワールド名がある場合
+            if (activityLog.WorldName != null)
+            {
                 WorldNameText.Text = activityLog.WorldName;
+                ChangeWorldInfoButton.Visibility = Visibility.Visible;
+                WorldInfoGrid.Visibility = Visibility.Visible;
+            }
+
+            // メッセージかURLがある場合
+            if (activityLog.Message != null || activityLog.Url != null)
+            {
+                MessageText.Text = activityLog.Message;
+                ChangeMessageInfoButton.Visibility = Visibility.Visible;
+
+                if (activityLog.WorldName == null)
+                {
+                    MessageInfoGrid.Visibility = Visibility.Visible;
+                }
             }
         }
 
@@ -56,33 +120,20 @@ namespace VRChatActivityLogViewer
         {
             try
             {
-                if (activityLog.ActivityType == ActivityType.JoinedRoom)
+                await GetWorldInformation();
+
+                if (activityLog.WorldID != null)
                 {
-                    var id = activityLog.WorldID?.Split(':')[0];
-
-                    if (!string.IsNullOrWhiteSpace(id))
+                    if (world != null)
                     {
-                        var world = await vrchatApiService.GetWorldAsync(id);
-
-                        if (world != null)
-                        {
-                            using (var stream = await webService.GetStreamAsync(world.ImageUrl))
-                            {
-                                var bitmap = new BitmapImage();
-
-                                bitmap.BeginInit();
-                                bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                                bitmap.CreateOptions = BitmapCreateOptions.None;
-                                bitmap.StreamSource = stream;
-                                bitmap.EndInit();
-                                bitmap.Freeze();
-
-                                ImageContent.Source = bitmap;
-                            }
-
-                            WorldAuthorText.Text = $"by {world.AuthorName}";
-                        }
+                        WorldImageContent.Source = await CreateBitmapImageFromUri(world.ImageUrl);
+                        WorldAuthorText.Text = $"by {world.AuthorName}";
                     }
+                }
+
+                if (activityLog.Url != null)
+                {
+                    MessageImageContent.Source = await CreateBitmapImageFromUri(activityLog.Url);
                 }
             }
             catch (Exception ex) when (ex is InvalidOperationException || ex is HttpRequestException)
@@ -93,6 +144,45 @@ namespace VRChatActivityLogViewer
             {
                 MessageBox.Show("エラーが発生しました。プログラムを終了します。", "VRChatActivityLogViewer", MessageBoxButton.OK, MessageBoxImage.Error);
                 Application.Current.Shutdown();
+            }
+        }
+
+        /// <summary>
+        /// ワールドの追加情報をVRCAPIで取得します
+        /// </summary>
+        /// <returns></returns>
+        private async Task GetWorldInformation()
+        {
+            if (world != null)
+            {
+                return;
+            }
+
+            var id = activityLog?.WorldID?.Split(':')[0];
+            if (!string.IsNullOrWhiteSpace(id))
+            {
+                world = await vrchatApiService.GetWorldAsync(id);
+            }
+        }
+
+        /// <summary>
+        /// ネットワークから画像を取得し、BitmapImageを作成します
+        /// </summary>
+        /// <returns></returns>
+        private async Task<BitmapImage> CreateBitmapImageFromUri(string uri)
+        {
+            using (var stream = await webService.GetStreamAsync(uri))
+            {
+                var bitmap = new BitmapImage();
+
+                bitmap.BeginInit();
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.CreateOptions = BitmapCreateOptions.None;
+                bitmap.StreamSource = stream;
+                bitmap.EndInit();
+                bitmap.Freeze();
+
+                return bitmap;
             }
         }
 
@@ -118,5 +208,74 @@ namespace VRChatActivityLogViewer
             ActivityType.ReceivedRequestInviteResponse => "Received RequestInvite Response",
             _ => "Unknown Activity",
         };
+
+        /// <summary>
+        /// Joinボタンクリック時のイベント
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void JoinButton_Click(object sender, RoutedEventArgs e)
+        {
+            if(activityLog == null || activityLog.WorldID == null)
+            {
+                return;
+            }
+
+            var uri = "vrchat://launch?id=" + activityLog.WorldID;
+            uri = uri.Replace("&", "^&");
+            Process.Start(new ProcessStartInfo("cmd", $"/c start {uri}") { CreateNoWindow = true });
+        }
+
+        /// <summary>
+        /// Copy World IDボタンクリック時のイベント
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CopyWorldIdButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (activityLog == null || activityLog.WorldID == null)
+            {
+                return;
+            }
+
+            Clipboard.SetText(activityLog.WorldID ?? "");
+        }
+
+        /// <summary>
+        /// Copy User IDボタンクリック時のイベント
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CopyUserIdButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (activityLog == null || activityLog.UserID == null)
+            {
+                return;
+            }
+
+            Clipboard.SetText(activityLog.UserID ?? "");
+        }
+
+        /// <summary>
+        /// Show Message Infoボタンクリック時のイベント
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ChangeMessageInfoButton_Click(object sender, RoutedEventArgs e)
+        {
+            WorldInfoGrid.Visibility = Visibility.Hidden;
+            MessageInfoGrid.Visibility = Visibility.Visible;
+        }
+
+        /// <summary>
+        /// Show World Infoボタンクリック時のイベント
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ChangeWorldInfoButton_Click(object sender, RoutedEventArgs e)
+        {
+            WorldInfoGrid.Visibility = Visibility.Visible;
+            MessageInfoGrid.Visibility = Visibility.Hidden;
+        }
     }
 }
