@@ -127,7 +127,7 @@ namespace VRChatActivityLogViewer
                 {
                     if (world != null)
                     {
-                        WorldImageContent.Source = await CreateBitmapImageFromUri(world.ImageUrl);
+                        WorldImageContent.Source = await CreateBitmapImageFromUri(world.ThumbnailImageUrl);
                         WorldImageContent.Visibility = Visibility.Visible;
 
                         WorldAuthorText.Text = $"by {world.AuthorName}";
