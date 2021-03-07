@@ -6,7 +6,7 @@
     <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
     <ApplicationIcon />
     <StartupObject />
-    <Version>1.1.3</Version>
+    <Version>1.2.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -15,13 +15,36 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="NLog" Version="4.6.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\VRChatActivityToolsShared\VRChatActivityToolsShared\VRChatActivityToolsShared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Batch\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ContentWithTargetPath Include="Batch\add-taskschedular.bat">
+      <TargetPath>add-taskschedular.bat</TargetPath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </ContentWithTargetPath>
+      <ContentWithTargetPath Include="Batch\delete-taskschedular.bat">
+      <TargetPath>delete-taskschedular.bat</TargetPath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Batch\task.xml">
+      <TargetPath>task.xml</TargetPath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </ContentWithTargetPath>
   </ItemGroup>
 
 </Project>

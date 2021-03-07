@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,27 +15,27 @@ using System.Windows.Shapes;
 namespace VRChatActivityLogViewer
 {
     /// <summary>
-    /// LoggerErrorDialog.xaml の相互作用ロジック
+    /// AboutDialog.xaml の相互作用ロジック
     /// </summary>
-    public partial class LoggerErrorDialog : Window
+    public partial class AboutDialog : Window
     {
-        private string errorFilePath;
-
-        public LoggerErrorDialog(string errorFilePath)
+        public AboutDialog()
         {
             InitializeComponent();
-            this.errorFilePath = errorFilePath;
-            filePathLink.Text = errorFilePath;
-        }
 
-        private void filePathLink_Click(object sender, RoutedEventArgs e)
-        {
-            Process.Start("EXPLORER.EXE", @$"/select,""{errorFilePath}""");
+            var version = Assembly.GetExecutingAssembly().GetName().Version;
+
+            versionText.Text = $"v{version.Major}.{version.Minor}.{version.Build}";
         }
 
         private void closeButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo("cmd", $"/c start {e.Uri}") { CreateNoWindow = true });
         }
     }
 }

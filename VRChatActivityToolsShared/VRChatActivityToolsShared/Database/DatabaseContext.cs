@@ -1,13 +1,21 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
-namespace VRChatActivityLogViewer
+namespace VRChatActivityToolsShared.Database
 {
     /// <summary>
     /// データベースコンテキスト
     /// </summary>
-    class DatabaseContext : DbContext
+    public class DatabaseContext : DbContext
     {
+        /// <summary>
+        /// データベースのバージョン
+        /// </summary>
+        public static int Version { get; } = 2;
+
         /// <summary>
         /// データベースのファイルパス
         /// </summary>
@@ -18,6 +26,11 @@ namespace VRChatActivityLogViewer
         /// </summary>
         public DbSet<ActivityLog> ActivityLogs { get; set; }
 
+        /// <summary>
+        /// Informationテーブル
+        /// </summary>
+        public DbSet<Information> Information { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var connectionString = new SqliteConnectionStringBuilder { DataSource = DBFilePath }.ToString();
@@ -27,6 +40,7 @@ namespace VRChatActivityLogViewer
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ActivityLog>().HasKey(a => new { a.ID });
+            modelBuilder.Entity<Information>().HasKey(a => new { a.ID });
         }
     }
 }

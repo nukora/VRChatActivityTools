@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using VRChatActivityToolsShared.Database;
 
 namespace VRChatActivityLogViewer
 {
@@ -53,6 +54,12 @@ namespace VRChatActivityLogViewer
             {
                 EnableProcessingMode();
 
+                // DBが古い場合はアップグレードする
+                if (DatabaseMigration.GetCurrentVersion() < DatabaseContext.Version)
+                {
+                    DatabaseMigration.UpgradeDatabase();
+                }
+
                 var parameter = new ActivityLogSearchParameter
                 {
                     IsJoinedRoom = joinCheckBox.IsChecked ?? false,
@@ -66,6 +73,8 @@ namespace VRChatActivityLogViewer
                     IsAcceptFriendRequest = acptFriendReqCheckBox.IsChecked ?? false,
                     FromDateTime = fromDatePicker.SelectedDate,
                     UntilDateTime = untilDatePicker.SelectedDate?.AddDays(1),
+                    IsReceivedInviteResponse = recvInvResCheckBox.IsChecked ?? false,
+                    IsReceivedRequestInviteResponse = recvReqInvResCheckBox.IsChecked ?? false,
                 };
                 var activityLogs = await VRChatActivityLogModel.SearchActivityLogs(parameter);
 
@@ -93,7 +102,7 @@ namespace VRChatActivityLogViewer
             }
             catch (Exception)
             {
-                MessageBox.Show("エラーが発生しました。プログラムを終了します。", "VRChatActivityLogViewer");
+                MessageBox.Show("エラーが発生しました。プログラムを終了します。", "VRChatActivityLogViewer", MessageBoxButton.OK, MessageBoxImage.Error);
                 Application.Current.Shutdown();
             }
         }
@@ -133,17 +142,17 @@ namespace VRChatActivityLogViewer
                         }
                     }
 
-                    MessageBox.Show("VRChatログの解析に失敗しました。", "VRChatActivityLogViewer");
+                    MessageBox.Show("VRChatログの解析に失敗しました。", "VRChatActivityLogViewer", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (System.ComponentModel.Win32Exception)
             {
-                MessageBox.Show("VRChatActivityLogger.exeが見つかりませんでした。", "VRChatActivityLogViewer");
+                MessageBox.Show("VRChatActivityLogger.exeが見つかりませんでした。", "VRChatActivityLogViewer", MessageBoxButton.OK, MessageBoxImage.Error);
                 DisableProcessingMode();
             }
             catch (Exception)
             {
-                MessageBox.Show("エラーが発生しました。プログラムを終了します。", "VRChatActivityLogViewer");
+                MessageBox.Show("エラーが発生しました。プログラムを終了します。", "VRChatActivityLogViewer", MessageBoxButton.OK, MessageBoxImage.Error);
                 Application.Current.Shutdown();
             }
         }
@@ -199,6 +208,24 @@ namespace VRChatActivityLogViewer
         }
 
         /// <summary>
+        /// Detailボタンクリック時のイベント
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DetailButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button)
+            {
+                if (button.Tag is ActivityLogGridModel tag)
+                {
+                    var dialog = new DetailWindow(tag.Source);
+                    dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                    dialog.Show();
+                }
+            }
+        }
+
+        /// <summary>
         /// 処理中モードにする
         /// </summary>
         private void EnableProcessingMode()
@@ -238,6 +265,100 @@ namespace VRChatActivityLogViewer
             if (e.Key == Key.Enter)
             {
                 await ExecuteSearch();
+            }
+        }
+
+        /// <summary>
+        /// Help/Aboutメニュークリック時のイベント
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AboutMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new AboutDialog();
+            dialog.Owner = this;
+            dialog.ShowDialog();
+        }
+
+        /// <summary>
+        /// File/Exitメニュークリック時のイベント
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ExitMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
+
+        /// <summary>
+        /// Tools/TaskScheduler/Registerメニュークリック時のイベント
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RegisterTaskSchedulerMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var result = MessageBox.Show("1時間毎にLoggerが実行されるようタスクスケジューラに登録しますか？", "VRChatActivityLogViewer", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if(result == MessageBoxResult.No)
+                {
+                    return;
+                }
+
+                var process = Process.Start(new ProcessStartInfo("add-taskschedular.bat", "/c") { RedirectStandardOutput = true, RedirectStandardError = true });
+                process.WaitForExit();
+                var stdo = process.StandardOutput.ReadToEnd();
+                var stde = process.StandardError.ReadToEnd();
+
+                if (string.IsNullOrWhiteSpace(stde))
+                {
+                    MessageBox.Show(stdo, "VRChatActivityLogViewer", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show(stde, "VRChatActivityLogViewer", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch (System.ComponentModel.Win32Exception)
+            {
+                MessageBox.Show("add-taskschedular.batが見つかりませんでした。", "VRChatActivityLogViewer");
+                DisableProcessingMode();
+            }
+        }
+
+        /// <summary>
+        /// Tools/TaskScheduler/Unregisterメニュークリック時のイベント
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void UnregisterTaskSchedulerMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var result = MessageBox.Show("タスクスケジューラに登録した設定を解除しますか？", "VRChatActivityLogViewer", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.No)
+                {
+                    return;
+                }
+
+                var process = Process.Start(new ProcessStartInfo("delete-taskschedular.bat", "/c") { RedirectStandardOutput = true, RedirectStandardError = true });
+                process.WaitForExit();
+                var stdo = process.StandardOutput.ReadToEnd();
+                var stde = process.StandardError.ReadToEnd();
+
+                if (string.IsNullOrWhiteSpace(stde))
+                {
+                    MessageBox.Show(stdo, "VRChatActivityLogViewer", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show(stde, "VRChatActivityLogViewer", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch (System.ComponentModel.Win32Exception)
+            {
+                MessageBox.Show("delete-taskschedular.batが見つかりませんでした。", "VRChatActivityLogViewer");
+                DisableProcessingMode();
             }
         }
     }

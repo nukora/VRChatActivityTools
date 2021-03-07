@@ -4,8 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Microsoft.Data.Sqlite;
-using Newtonsoft.Json;
+using VRChatActivityToolsShared.Database;
 using static System.Environment;
 
 namespace VRChatActivityLogger
@@ -37,6 +36,7 @@ namespace VRChatActivityLogger
             {
                 ClearErrorInfoFile();
 
+                // ログ解析
                 var activityLogs = new List<ActivityLog>();
                 foreach (var file in Directory.EnumerateFiles(VRChatLogFilePath, "output_log_*"))
                 {
@@ -45,12 +45,33 @@ namespace VRChatActivityLogger
                 }
                 activityLogs = activityLogs.OrderBy(a => a.Timestamp).ToList();
 
+                // DBファイルチェック
                 if (!File.Exists(DatabaseContext.DBFilePath))
                 {
                     logger.Info("データベースファイルが見つかりませんでした。新しく作成します。");
-                    CreateDatabase();
+
+                    DatabaseMigration.CreateDatabase();
+
+                    logger.Info("データベースファイルを作成しました。");
                 }
 
+                // DBバージョンチェック
+                var currentVersion = DatabaseMigration.GetCurrentVersion();
+
+                if (currentVersion < DatabaseContext.Version)
+                {
+                    logger.Info("古いバージョンのデータベースを使用しています。データベースのアップグレードを行います。");
+
+                    DatabaseMigration.UpgradeDatabase();
+
+                    logger.Info("データベースをアップグレードしました。");
+                }
+                else if (DatabaseContext.Version < currentVersion)
+                {
+                    throw new InvalidOperationException("新しいバージョンのアプリで作成されたデータベースが存在するため、処理を中断します。");
+                }
+
+                // DB更新
                 using (var db = new DatabaseContext())
                 {
                     var lastActivity = db.ActivityLogs.Find(db.ActivityLogs.Max(a => a.ID));
@@ -141,68 +162,88 @@ namespace VRChatActivityLogger
                     if (match.Groups[PatternType.ReceivedInvite].Value.Length != 0)
                     {
                         var m = RegexPatterns.ReceivedInviteDetail.Match(match.ToString());
-                        var jsonRawData = m.Groups[2].Value.Replace("{{", "{").Replace("}}", "}");
-                        var numCurlyBracketBegin = jsonRawData.Count(c => c == '{');
-                        var numCurlyBracketEnd = jsonRawData.Count(c => c == '}');
-                        if (numCurlyBracketBegin > numCurlyBracketEnd)
-                        {
-                            jsonRawData += new string('}', numCurlyBracketBegin - numCurlyBracketEnd);
-                        }
-                        dynamic content = JsonConvert.DeserializeObject(jsonRawData);
                         var activityLog = new ActivityLog
                         {
                             ActivityType = ActivityType.ReceivedInvite,
                             Timestamp = DateTime.Parse(m.Groups[1].Value),
-                            NotificationID = content.id,
-                            UserID = content.senderUserId,
-                            UserName = content.senderUsername,
-                            WorldID = content.details.worldId,
-                            WorldName = content.details.worldName,
+                            NotificationID = m.Groups[4].Value,
+                            UserID = m.Groups[3].Value,
+                            UserName = m.Groups[2].Value,
+                            WorldID = m.Groups[5].Value,
+                            WorldName = m.Groups[6].Value,
                         };
-                        if (!activityLogs.Where(a => a.NotificationID == activityLog.NotificationID).Any())
+
+                        if (m.Groups[8].Success)
                         {
-                            activityLogs.Add(activityLog);
+                            activityLog.Message = m.Groups[8].Value;
                         }
+
+                        if (m.Groups[10].Success)
+                        {
+                            activityLog.Url = m.Groups[10].Value;
+                        }
+
+                        activityLogs.Add(activityLog);
                     }
                     else if (match.Groups[PatternType.ReceivedRequestInvite].Value.Length != 0)
                     {
                         var m = RegexPatterns.ReceivedRequestInviteDetail.Match(match.ToString());
-                        var jsonRawData = m.Groups[2].Value.Replace("{{", "{").Replace("}}", "}");
-                        dynamic content = JsonConvert.DeserializeObject(jsonRawData);
                         var activityLog = new ActivityLog
                         {
                             ActivityType = ActivityType.ReceivedRequestInvite,
                             Timestamp = DateTime.Parse(m.Groups[1].Value),
-                            NotificationID = content.id,
-                            UserID = content.senderUserId,
-                            UserName = content.senderUsername,
+                            NotificationID = m.Groups[4].Value,
+                            UserID = m.Groups[3].Value,
+                            UserName = m.Groups[2].Value,
                         };
-                        if (!activityLogs.Where(a => a.NotificationID == activityLog.NotificationID).Any())
+
+                        if (m.Groups[6].Success)
                         {
-                            activityLogs.Add(activityLog);
+                            activityLog.Message = m.Groups[6].Value;
                         }
+
+                        if (m.Groups[8].Success)
+                        {
+                            activityLog.Url = m.Groups[8].Value;
+                        }
+
+                        activityLogs.Add(activityLog);
                     }
                     else if (match.Groups[PatternType.SendInvite].Value.Length != 0)
                     {
                         var m = RegexPatterns.SendInviteDetail.Match(match.ToString());
-                        activityLogs.Add(new ActivityLog
+                        var activityLog = new ActivityLog
                         {
                             ActivityType = ActivityType.SendInvite,
                             Timestamp = DateTime.Parse(m.Groups[1].Value),
                             UserID = m.Groups[2].Value,
                             WorldID = m.Groups[3].Value,
                             WorldName = m.Groups[4].Value,
-                        });
+                        };
+
+                        if (m.Groups[6].Success)
+                        {
+                            activityLog.Message = m.Groups[6].Value;
+                        }
+
+                        activityLogs.Add(activityLog);
                     }
                     else if (match.Groups[PatternType.SendRequestInvite].Value.Length != 0)
                     {
                         var m = RegexPatterns.SendRequestInviteDetail.Match(match.ToString());
-                        activityLogs.Add(new ActivityLog
+                        var activityLog = new ActivityLog
                         {
                             ActivityType = ActivityType.SendRequestInvite,
                             Timestamp = DateTime.Parse(m.Groups[1].Value),
                             UserID = m.Groups[2].Value,
-                        });
+                        };
+
+                        if (m.Groups[3].Success)
+                        {
+                            activityLog.Message = m.Groups[3].Value;
+                        }
+
+                        activityLogs.Add(activityLog);
                     }
                     else if (match.Groups[PatternType.JoinedRoom1].Value.Length != 0)
                     {
@@ -254,20 +295,16 @@ namespace VRChatActivityLogger
                     else if (match.Groups[PatternType.ReceivedFriendRequest].Value.Length != 0)
                     {
                         var m = RegexPatterns.ReceivedFriendRequestDetail.Match(match.ToString());
-                        var jsonRawData = m.Groups[2].Value.Replace("{{", "{").Replace("}}", "}");
-                        dynamic content = JsonConvert.DeserializeObject(jsonRawData);
                         var activityLog = new ActivityLog
                         {
                             ActivityType = ActivityType.ReceivedFriendRequest,
                             Timestamp = DateTime.Parse(m.Groups[1].Value),
-                            NotificationID = content.id,
-                            UserID = content.senderUserId,
-                            UserName = content.senderUsername,
+                            NotificationID = m.Groups[4].Value,
+                            UserID = m.Groups[3].Value,
+                            UserName = m.Groups[2].Value,
                         };
-                        if (!activityLogs.Where(a => a.NotificationID == activityLog.NotificationID).Any())
-                        {
-                            activityLogs.Add(activityLog);
-                        }
+
+                        activityLogs.Add(activityLog);
                     }
                     else if (match.Groups[PatternType.AcceptFriendRequest].Value.Length != 0)
                     {
@@ -280,6 +317,54 @@ namespace VRChatActivityLogger
                             UserID = m.Groups[3].Value,
                             NotificationID = m.Groups[4].Value,
                         });
+                    }
+                    else if (match.Groups[PatternType.ReceivedInviteResponse].Value.Length != 0)
+                    {
+                        var m = RegexPatterns.ReceivedInviteResponseDetail.Match(match.ToString());
+                        var activityLog = new ActivityLog
+                        {
+                            ActivityType = ActivityType.ReceivedInviteResponse,
+                            Timestamp = DateTime.Parse(m.Groups[1].Value),
+                            NotificationID = m.Groups[4].Value,
+                            UserName = m.Groups[2].Value,
+                            UserID = m.Groups[3].Value,
+                        };
+
+                        if (m.Groups[6].Success)
+                        {
+                            activityLog.Message = m.Groups[6].Value;
+                        }
+
+                        if (m.Groups[8].Success)
+                        {
+                            activityLog.Url = m.Groups[8].Value;
+                        }
+
+                        activityLogs.Add(activityLog);
+                    }
+                    else if (match.Groups[PatternType.ReceivedRequestInviteResponse].Value.Length != 0)
+                    {
+                        var m = RegexPatterns.ReceivedRequestInviteResponseDetail.Match(match.ToString());
+                        var activityLog = new ActivityLog
+                        {
+                            ActivityType = ActivityType.ReceivedRequestInviteResponse,
+                            Timestamp = DateTime.Parse(m.Groups[1].Value),
+                            NotificationID = m.Groups[4].Value,
+                            UserName = m.Groups[2].Value,
+                            UserID = m.Groups[3].Value,
+                        };
+
+                        if (m.Groups[6].Success)
+                        {
+                            activityLog.Message = m.Groups[6].Value;
+                        }
+
+                        if (m.Groups[8].Success)
+                        {
+                            activityLog.Url = m.Groups[8].Value;
+                        }
+
+                        activityLogs.Add(activityLog);
                     }
                     else
                     {
@@ -294,37 +379,6 @@ namespace VRChatActivityLogger
             }
 
             return activityLogs;
-        }
-
-        /// <summary>
-        /// データベースを新規作成します。
-        /// </summary>
-        /// <returns></returns>
-        private bool CreateDatabase()
-        {
-            using (SqliteConnection db = new SqliteConnection($"Filename={DatabaseContext.DBFilePath}"))
-            {
-                db.Open();
-
-                string tableCommand = @"
-
-CREATE TABLE ""ActivityLogs"" (
-    ""ID"" INTEGER NOT NULL CONSTRAINT ""PK_ActivityLogs"" PRIMARY KEY AUTOINCREMENT,
-    ""ActivityType"" INTEGER NOT NULL,
-    ""Timestamp"" TEXT NULL,
-    ""NotificationID"" TEXT NULL,
-    ""UserID"" TEXT NULL,
-    ""UserName"" TEXT NULL,
-    ""WorldID"" TEXT NULL,
-    ""WorldName"" TEXT NULL
-);
-                ";
-
-                SqliteCommand createTable = new SqliteCommand(tableCommand, db);
-
-                createTable.ExecuteReader();
-            }
-            return true;
         }
 
         private string processingFilePath = string.Empty;

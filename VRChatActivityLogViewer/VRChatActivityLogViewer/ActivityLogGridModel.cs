@@ -1,35 +1,42 @@
 ﻿using System;
+using VRChatActivityToolsShared.Database;
 
 namespace VRChatActivityLogViewer
 {
     /// <summary>
     /// DataGridに表示するモデル
     /// </summary>
-    class ActivityLogGridModel
+    public class ActivityLogGridModel
     {
         /// <summary>タイムスタンプ</summary>
-        public DateTime TimeStamp { get; set; }
+        public DateTime TimeStamp { get; }
 
         /// <summary>アクティビティの種類の名前</summary>
-        public string ActivityName { get; set; }
+        public string ActivityName { get; }
 
         /// <summary>アクティビティの種類</summary>
-        public ActivityType Type { get; set; }
+        public ActivityType Type { get; }
 
         /// <summary>アクティビティの内容</summary>
-        public string Content { get; set; }
+        public string Content { get; }
 
         /// <summary>ワールドIDがコピーできるか</summary>
-        public bool IsCopyableWorldID { get; set; } = false;
+        public bool IsCopyableWorldID { get; } = false;
 
         /// <summary>ユーザIDがコピーできるか</summary>
-        public bool IsCopyableUserID { get; set; } = false;
+        public bool IsCopyableUserID { get; } = false;
+
+        /// <summary>詳細画面が有効かどうか</summary>
+        public bool IsDetailWindowEnabled { get; } = false;
 
         /// <summary>ワールドID</summary>
-        public string WorldID { get; set; }
+        public string WorldID { get; }
 
         /// <summary>ユーザID</summary>
-        public string UserID { get; set; }
+        public string UserID { get; }
+
+        /// <summary>元データ</summary>
+        public ActivityLog Source { get; }
 
         /// <summary>
         /// コンストラクタ
@@ -37,14 +44,24 @@ namespace VRChatActivityLogViewer
         /// <param name="activityLog"></param>
         public ActivityLogGridModel(ActivityLog activityLog)
         {
+            Source = activityLog;
+
             Type = activityLog.ActivityType;
             TimeStamp = activityLog.Timestamp ?? default;
+
+            var addIcon = string.Empty;
+            if (activityLog.Message != null || activityLog.Url != null)
+            {
+                addIcon += "✉";
+            }
+
             if (activityLog.ActivityType == ActivityType.JoinedRoom)
             {
                 ActivityName = "Join";
                 Content = activityLog.WorldName;
                 WorldID = activityLog.WorldID;
                 IsCopyableWorldID = true;
+                IsDetailWindowEnabled = true;
             }
             if (activityLog.ActivityType == ActivityType.MetPlayer)
             {
@@ -54,39 +71,44 @@ namespace VRChatActivityLogViewer
             if (activityLog.ActivityType == ActivityType.SendInvite)
             {
                 ActivityName = "Send Invite";
-                Content = activityLog.WorldName;
+                Content = addIcon + activityLog.WorldName;
                 WorldID = activityLog.WorldID;
                 IsCopyableWorldID = true;
                 UserID = activityLog.UserID;
                 IsCopyableUserID = true;
+                IsDetailWindowEnabled = true;
             }
             if (activityLog.ActivityType == ActivityType.ReceivedInvite)
             {
                 ActivityName = "Received Invite";
-                Content = activityLog.UserName + " -> " + activityLog.WorldName;
+                Content = addIcon + activityLog.UserName + " -> " + activityLog.WorldName;
                 WorldID = activityLog.WorldID;
                 IsCopyableWorldID = true;
                 UserID = activityLog.UserID;
                 IsCopyableUserID = true;
+                IsDetailWindowEnabled = true;
             }
             if (activityLog.ActivityType == ActivityType.SendRequestInvite)
             {
                 ActivityName = "Send RequestInvite";
-                UserID = activityLog.UserID;
+                UserID = addIcon + activityLog.UserID;
                 IsCopyableUserID = true;
+                IsDetailWindowEnabled = true;
             }
             if (activityLog.ActivityType == ActivityType.ReceivedRequestInvite)
             {
                 ActivityName = "Received RequestInvite";
-                Content = activityLog.UserName;
+                Content = addIcon + activityLog.UserName;
                 UserID = activityLog.UserID;
                 IsCopyableUserID = true;
+                IsDetailWindowEnabled = true;
             }
             if (activityLog.ActivityType == ActivityType.SendFriendRequest)
             {
                 ActivityName = "Send FriendRequest";
                 UserID = activityLog.UserID;
                 IsCopyableUserID = true;
+                IsDetailWindowEnabled = true;
             }
             if (activityLog.ActivityType == ActivityType.ReceivedFriendRequest)
             {
@@ -94,6 +116,7 @@ namespace VRChatActivityLogViewer
                 Content = activityLog.UserName;
                 UserID = activityLog.UserID;
                 IsCopyableUserID = true;
+                IsDetailWindowEnabled = true;
             }
             if (activityLog.ActivityType == ActivityType.AcceptFriendRequest)
             {
@@ -101,6 +124,23 @@ namespace VRChatActivityLogViewer
                 Content = activityLog.UserName;
                 UserID = activityLog.UserID;
                 IsCopyableUserID = true;
+                IsDetailWindowEnabled = true;
+            }
+            if (activityLog.ActivityType == ActivityType.ReceivedInviteResponse)
+            {
+                ActivityName = "Received InviteResponse";
+                Content = addIcon + activityLog.UserName;
+                UserID = activityLog.UserID;
+                IsCopyableUserID = true;
+                IsDetailWindowEnabled = true;
+            }
+            if (activityLog.ActivityType == ActivityType.ReceivedRequestInviteResponse)
+            {
+                ActivityName = "Received RequestInviteResponse";
+                Content = addIcon + activityLog.UserName;
+                UserID = activityLog.UserID;
+                IsCopyableUserID = true;
+                IsDetailWindowEnabled = true;
             }
         }
     }
