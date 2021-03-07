@@ -28,6 +28,23 @@ namespace VRChatActivityLogViewer
             var byteArray = await client.GetByteArrayAsync(uri);
             return new WrappingStream(new MemoryStream(byteArray));
         }
+
+        /// <summary>
+        /// URIを指定してファイルをストレージにダウンロードする
+        /// </summary>
+        /// <param name="uri"></param>
+        /// <returns></returns>
+        public async Task DownloadFile(string uri, string filePath)
+        {
+            using var response = await client.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead);
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                using var stream = await response.Content.ReadAsStreamAsync();
+                using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None);
+                await stream.CopyToAsync(fileStream);
+                fileStream.Flush();
+            }
+        }
     }
 
     /// <summary>

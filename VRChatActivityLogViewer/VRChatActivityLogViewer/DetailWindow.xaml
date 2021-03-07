@@ -42,7 +42,7 @@
                 </Grid>
                 <Grid Grid.Row="1" Grid.Column="0" Margin="5,0,5,5">
                     <TextBlock Text="&#xE8B9;" FontFamily="Segoe MDL2 Assets" FontSize="64" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    <Image x:Name="WorldImageContent" Stretch="Uniform"/>
+                    <Image x:Name="WorldImageContent" Stretch="Uniform" Visibility="Hidden"/>
                 </Grid>
                 <Grid Grid.Row="1" Grid.Column="1">
                     <Grid.RowDefinitions>
@@ -50,7 +50,16 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <TextBlock x:Name="WorldNameText" Grid.Row="0" FontSize="24" Margin="15,15,15,0" TextWrapping="Wrap"/>
+                    <TextBlock Grid.Row="0" FontSize="24" Margin="15,15,15,0" TextWrapping="WrapWithOverflow">
+                        <Hyperlink Click="WorldHyperlink_Click" TextDecorations="" Cursor="Hand">
+                            <Hyperlink.Style>
+                                <Style TargetType="Hyperlink" BasedOn="{StaticResource {x:Type Hyperlink}}">
+                                    <Setter Property="Foreground" Value="Black"/>
+                                </Style>
+                            </Hyperlink.Style>
+                            <Run x:Name="WorldNameText"/>
+                        </Hyperlink>
+                    </TextBlock>
                     <TextBlock x:Name="WorldAuthorText" Grid.Row="1" Text="" FontSize="16" Margin="15,0,15,0" TextWrapping="Wrap"/>
                     <Button x:Name="ChangeMessageInfoButton" Grid.Row="2" Content="Show Message Info" Margin="5" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="ChangeMessageInfoButton_Click" Visibility="Hidden"/>
                 </Grid>
@@ -69,7 +78,13 @@
                 </Grid>
                 <Grid Grid.Row="1" Grid.Column="0" Margin="5,0,5,5">
                     <TextBlock Text="&#xE8B9;" FontFamily="Segoe MDL2 Assets" FontSize="64" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    <Image x:Name="MessageImageContent" Stretch="Uniform"/>
+                    <Image x:Name="MessageImageContent" Stretch="Uniform" Visibility="Hidden">
+                        <Image.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="名前を付けて画像を保存" Click="SaveMessageImageMenuItem_Click"/>
+                            </ContextMenu>
+                        </Image.ContextMenu>
+                    </Image>
                 </Grid>
                 <Grid Grid.Row="1" Grid.Column="1">
                     <Grid.RowDefinitions>

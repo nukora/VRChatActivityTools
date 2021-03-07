@@ -54,6 +54,12 @@ namespace VRChatActivityLogViewer
             {
                 EnableProcessingMode();
 
+                // DBが古い場合はアップグレードする
+                if (DatabaseMigration.GetCurrentVersion() < DatabaseContext.Version)
+                {
+                    DatabaseMigration.UpgradeDatabase();
+                }
+
                 var parameter = new ActivityLogSearchParameter
                 {
                     IsJoinedRoom = joinCheckBox.IsChecked ?? false,

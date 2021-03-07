@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
@@ -127,6 +128,8 @@ namespace VRChatActivityLogViewer
                     if (world != null)
                     {
                         WorldImageContent.Source = await CreateBitmapImageFromUri(world.ImageUrl);
+                        WorldImageContent.Visibility = Visibility.Visible;
+
                         WorldAuthorText.Text = $"by {world.AuthorName}";
                     }
                 }
@@ -134,6 +137,7 @@ namespace VRChatActivityLogViewer
                 if (activityLog.Url != null)
                 {
                     MessageImageContent.Source = await CreateBitmapImageFromUri(activityLog.Url);
+                    MessageImageContent.Visibility = Visibility.Visible;
                 }
             }
             catch (Exception ex) when (ex is InvalidOperationException || ex is HttpRequestException)
@@ -276,6 +280,45 @@ namespace VRChatActivityLogViewer
         {
             WorldInfoGrid.Visibility = Visibility.Visible;
             MessageInfoGrid.Visibility = Visibility.Hidden;
+        }
+
+        /// <summary>
+        /// ワールド名クリック時のイベント
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void WorldHyperlink_Click(object sender, RoutedEventArgs e)
+        {
+            var id = activityLog?.WorldID?.Split(':')[0];
+            var uri = $"https://vrchat.com/home/world/{id}";
+
+            Process.Start(new ProcessStartInfo("cmd", $"/c start {uri}") { CreateNoWindow = true });
+        }
+
+        /// <summary>
+        /// 名前を付けて画像を保存メニュークリック時のイベント
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void SaveMessageImageMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var s = activityLog.Url.Split('/');
+                var fileName = s[s.Length - 1];
+                var dialog = new SaveFileDialog();
+                dialog.FileName = fileName;
+                dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+
+                if (dialog.ShowDialog() ?? false)
+                {
+                    await webService.DownloadFile(activityLog.Url, dialog.FileName);
+                }
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("ファイルの保存に失敗しました", "VRChatActivityLogViewer", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }
