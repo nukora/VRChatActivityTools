@@ -19,6 +19,16 @@ namespace VRChatActivityLogViewer
         private static HttpClient client = new HttpClient();
 
         /// <summary>
+        /// ユーザーエージェント文字列
+        /// </summary>
+        private static string userAgent = "Wget/1.20.3";
+
+        static WebService()
+        {
+            client.DefaultRequestHeaders.Add("User-Agent", userAgent);
+        }
+
+        /// <summary>
         /// URIを指定して画像をダウンロードする
         /// </summary>
         /// <param name="uri"></param>
