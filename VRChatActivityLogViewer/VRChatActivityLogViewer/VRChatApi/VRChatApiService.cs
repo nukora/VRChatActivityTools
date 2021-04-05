@@ -27,12 +27,19 @@ namespace VRChatActivityLogViewer.VRChatApi
         /// </summary>
         private static JsonSerializerOptions jsonSerializerOptions;
 
+        /// <summary>
+        /// ユーザーエージェント文字列
+        /// </summary>
+        private static string userAgent = "Wget/1.20.3";
+
         static VRChatApiService()
         {
             jsonSerializerOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
             };
+
+            client.DefaultRequestHeaders.Add("User-Agent", userAgent);
         }
 
         /// <summary>
