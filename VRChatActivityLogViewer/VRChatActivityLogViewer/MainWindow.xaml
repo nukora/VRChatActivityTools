@@ -76,6 +76,7 @@
                         <TextBlock Width="50" TextAlignment="Right" Margin="0,0,10,0" ></TextBlock>
                         <CheckBox x:Name="joinCheckBox" Content="Join" IsChecked="True" Padding="4,-1,4,0"/>
                         <CheckBox x:Name="meetCheckBox" Content="Meet" IsChecked="True" Padding="4,-1,4,0"/>
+                        <CheckBox x:Name="videoCheckBox" Content="Video" IsChecked="False" Padding="4,-1,4,0"/>
                     </StackPanel>
                     <StackPanel Grid.Row="1" Orientation="Horizontal">
                         <TextBlock Width="50" TextAlignment="Right" Margin="0,0,10,0" >Send</TextBlock>
@@ -159,6 +160,9 @@
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.ReceivedRequestInviteResponse}">
                                     <Setter Property="Background" Value="LightBlue" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.PlayedVideo}">
+                                    <Setter Property="Background" Value="Pink" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>

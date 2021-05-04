@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace VRChatActivityToolsShared.Database
 {
-    public class ActivityLog
+    public class ActivityLog : IEquatable<ActivityLog>
     {
         /// <summary>アクティビティで一意のID</summary>
         public int? ID { get; set; }
@@ -27,19 +28,24 @@ namespace VRChatActivityToolsShared.Database
         /// <summary>関連するURL</summary>
         public string Url { get; set; }
 
+        public bool Equals(ActivityLog other)
+        {
+            return other is ActivityLog log &&
+                EqualityComparer<int?>.Default.Equals(ID, log.ID) &&
+                ActivityType == log.ActivityType &&
+                EqualityComparer<DateTime?>.Default.Equals(Timestamp, log.Timestamp) &&
+                NotificationID == log.NotificationID &&
+                UserID == log.UserID &&
+                UserName == log.UserName &&
+                WorldID == log.WorldID &&
+                WorldName == log.WorldName &&
+                Message == log.Message &&
+                Url == log.Url;
+        }
+
         public override bool Equals(object obj)
         {
-            return obj is ActivityLog log &&
-                    EqualityComparer<int?>.Default.Equals(ID, log.ID) &&
-                     ActivityType == log.ActivityType &&
-                    EqualityComparer<DateTime?>.Default.Equals(Timestamp, log.Timestamp) &&
-                     NotificationID == log.NotificationID &&
-                     UserID == log.UserID &&
-                     UserName == log.UserName &&
-                     WorldID == log.WorldID &&
-                     WorldName == log.WorldName &&
-                     Message == log.Message &&
-                     Url == log.Url;
+            return Equals(obj as ActivityLog);
         }
 
         public override int GetHashCode()
@@ -59,5 +65,17 @@ namespace VRChatActivityToolsShared.Database
 
             return hash.ToHashCode();
         }
+
+        public static bool operator ==(ActivityLog l, ActivityLog r)
+        {
+            if (l is null && r is null)
+            {
+                return true;
+            }
+
+            return Equals(l, r);
+        }
+
+        public static bool operator !=(ActivityLog l, ActivityLog r) => !(l == r);
     }
 }

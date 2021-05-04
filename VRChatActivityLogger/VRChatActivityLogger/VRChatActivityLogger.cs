@@ -366,6 +366,41 @@ namespace VRChatActivityLogger
 
                         activityLogs.Add(activityLog);
                     }
+                    else if (match.Groups[PatternType.PlayedVideo1].Value.Length != 0)
+                    {
+                        // VRCSDK2で作成したワールドの場合
+
+                        var m = RegexPatterns.PlayedVideo1Detail.Match(match.ToString());
+                        var activityLog = new ActivityLog
+                        {
+                            ActivityType = ActivityType.PlayedVideo,
+                            Timestamp = DateTime.Parse(m.Groups[1].Value),
+                            UserName = m.Groups[2].Value,
+                            Url = m.Groups[3].Value,
+                        };
+
+                        // 1回のアクションにつき2行のログが出力される事がある
+                        if (activityLogs[activityLogs.Count - 1] == activityLog)
+                        {
+                            continue;
+                        }
+
+                        activityLogs.Add(activityLog);
+                    }
+                    else if (match.Groups[PatternType.PlayedVideo2].Value.Length != 0)
+                    {
+                        // VRCSDK3で作成したワールドの場合
+
+                        var m = RegexPatterns.PlayedVideo2Detail.Match(match.ToString());
+                        var activityLog = new ActivityLog
+                        {
+                            ActivityType = ActivityType.PlayedVideo,
+                            Timestamp = DateTime.Parse(m.Groups[1].Value),
+                            Url = m.Groups[2].Value,
+                        };
+
+                        activityLogs.Add(activityLog);
+                    }
                     else
                     {
                         continue;

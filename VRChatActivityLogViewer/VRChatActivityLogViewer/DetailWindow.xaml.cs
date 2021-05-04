@@ -1,9 +1,11 @@
-﻿using Microsoft.Win32;
+﻿using Microsoft.Toolkit.Win32.UI.Controls.Interop.WinRT;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -53,12 +55,73 @@ namespace VRChatActivityLogViewer
             JoinButton.Visibility = activityLog.WorldID != null ? Visibility.Visible : Visibility.Collapsed;
             CopyWorldIdButton.Visibility = activityLog.WorldID != null ? Visibility.Visible : Visibility.Collapsed;
             CopyUserIdButton.Visibility = activityLog.UserID != null ? Visibility.Visible : Visibility.Collapsed;
+            CopyUrlButton.Visibility = activityLog.ActivityType == ActivityType.PlayedVideo && activityLog.Url != null ? Visibility.Visible : Visibility.Collapsed;
 
             // アクティビティタイプとタイムスタンプ
             ActivityTypeText.Text = ActivityTypeToString(activityLog.ActivityType);
             TimestampText.Text = activityLog.Timestamp?.ToString("yyyy/MM/dd HH:mm:ss");
 
-            // アクティビティタイプによって表示内容を変更
+            // アクティビティタイプによってヘッダの表示内容を変更
+            InitializeHeaderView();
+
+            // Videoの場合
+            if (activityLog.ActivityType == ActivityType.PlayedVideo)
+            {
+                // Youtubeのみ特別扱いして埋め込みプレイヤーを表示する
+                var youtubeUrlRegex = @"^https?://(www\.)youtube\.com/watch\?v=([^&]+).*$|^https?://youtu\.be/(.*)$";
+                var match = Regex.Match(activityLog.Url, youtubeUrlRegex);
+
+                if (match.Success)
+                {
+                    var id = match.Groups[2].Success ? match.Groups[2].Value : match.Groups[3].Success ? match.Groups[3].Value : string.Empty;
+                    var url = @$"https://www.youtube.com/embed/{id}";
+                    VideoGrid.Visibility = Visibility.Visible;
+                    VideoWebBrowser.Source = new Uri(url);
+                }
+            }
+
+            // Video以外の場合は共通の処理
+            if (activityLog.ActivityType != ActivityType.PlayedVideo)
+            {
+                // ワールド名がある場合
+                if (activityLog.WorldName != null)
+                {
+                    WorldNameText.Text = activityLog.WorldName;
+                    ChangeWorldInfoButton.Visibility = Visibility.Visible;
+                    UnknownContentsGrid.Visibility = Visibility.Hidden;
+                    WorldInfoGrid.Visibility = Visibility.Visible;
+                }
+
+                // メッセージかURLがある場合
+                if (activityLog.Message != null || activityLog.Url != null)
+                {
+                    MessageText.Text = activityLog.Message;
+                    ChangeMessageInfoButton.Visibility = Visibility.Visible;
+
+                    if (activityLog.WorldName == null)
+                    {
+                        UnknownContentsGrid.Visibility = Visibility.Hidden;
+                        MessageInfoGrid.Visibility = Visibility.Visible;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// ウィンドウが閉じる時のイベント
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DetailWindow_Closed(object sender, EventArgs e)
+        {
+            VideoWebBrowser.Close();
+        }
+
+        /// <summary>
+        /// ヘッダを初期化します
+        /// </summary>
+        private void InitializeHeaderView()
+        {
             if (activityLog.ActivityType == ActivityType.JoinedRoom)
             {
                 HeaderGrid.Background = new SolidColorBrush(Colors.Plum);
@@ -91,24 +154,9 @@ namespace VRChatActivityLogViewer
                 FromUserName.Text = $"from {activityLog.UserName}";
             }
 
-            // ワールド名がある場合
-            if (activityLog.WorldName != null)
+            if (activityLog.ActivityType == ActivityType.PlayedVideo)
             {
-                WorldNameText.Text = activityLog.WorldName;
-                ChangeWorldInfoButton.Visibility = Visibility.Visible;
-                WorldInfoGrid.Visibility = Visibility.Visible;
-            }
-
-            // メッセージかURLがある場合
-            if (activityLog.Message != null || activityLog.Url != null)
-            {
-                MessageText.Text = activityLog.Message;
-                ChangeMessageInfoButton.Visibility = Visibility.Visible;
-
-                if (activityLog.WorldName == null)
-                {
-                    MessageInfoGrid.Visibility = Visibility.Visible;
-                }
+                HeaderGrid.Background = new SolidColorBrush(Colors.Pink);
             }
         }
 
@@ -134,7 +182,7 @@ namespace VRChatActivityLogViewer
                     }
                 }
 
-                if (activityLog.Url != null)
+                if (activityLog.Url != null && activityLog.ActivityType != ActivityType.PlayedVideo)
                 {
                     MessageImageContent.Source = await CreateBitmapImageFromUri(activityLog.Url);
                     MessageImageContent.Visibility = Visibility.Visible;
@@ -210,6 +258,7 @@ namespace VRChatActivityLogViewer
             ActivityType.ReceivedInviteResponse => "Received Invite Response",
             ActivityType.SendRequestInviteResponse => "Send RequestInvite Response",
             ActivityType.ReceivedRequestInviteResponse => "Received RequestInvite Response",
+            ActivityType.PlayedVideo => "Video",
             _ => "Unknown Activity",
         };
 
@@ -258,6 +307,21 @@ namespace VRChatActivityLogViewer
             }
 
             Clipboard.SetText(activityLog.UserID ?? "");
+        }
+
+        /// <summary>
+        /// Copy Urlボタンクリック時のイベント
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CopyUrlButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (activityLog == null || activityLog.Url == null)
+            {
+                return;
+            }
+
+            Clipboard.SetText(activityLog.Url ?? "");
         }
 
         /// <summary>
@@ -319,6 +383,17 @@ namespace VRChatActivityLogViewer
             {
                 MessageBox.Show("ファイルの保存に失敗しました", "VRChatActivityLogViewer", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        /// <summary>
+        /// 埋め込みプレイヤーが新しいウィンドウをリクエストした時のイベント
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void VideoWebBrowser_NewWindowRequested(object sender, WebViewControlNewWindowRequestedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo("cmd", $"/c start {e.Uri}") { CreateNoWindow = true });
+            e.Handled = true;
         }
     }
 }

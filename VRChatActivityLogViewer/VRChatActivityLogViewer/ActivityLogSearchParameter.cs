@@ -45,5 +45,8 @@ namespace VRChatActivityLogViewer
 
         /// <summary>reqInvへの返信を受け取った履歴を含める</summary>
         public bool IsReceivedRequestInviteResponse { get; set; } = true;
+
+        /// <summary>動画を再生した履歴を含める</summary>
+        public bool IsPlayedVideo { get; set; } = true;
     }
 }

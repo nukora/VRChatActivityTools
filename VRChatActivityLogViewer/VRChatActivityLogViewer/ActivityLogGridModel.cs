@@ -26,6 +26,9 @@ namespace VRChatActivityLogViewer
         /// <summary>ユーザIDがコピーできるか</summary>
         public bool IsCopyableUserID { get; } = false;
 
+        /// <summary>URLがコピーできるか</summary>
+        public bool IsCopyableUrl { get; } = false;
+
         /// <summary>詳細画面が有効かどうか</summary>
         public bool IsDetailWindowEnabled { get; } = false;
 
@@ -141,6 +144,13 @@ namespace VRChatActivityLogViewer
                 UserID = activityLog.UserID;
                 IsCopyableUserID = true;
                 IsDetailWindowEnabled = true;
+            }
+            if (activityLog.ActivityType == ActivityType.PlayedVideo)
+            {
+                ActivityName = "Video";
+                Content = activityLog.Url;
+                IsDetailWindowEnabled = true;
+                IsCopyableUrl = true;
             }
         }
     }

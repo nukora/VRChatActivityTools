@@ -42,6 +42,8 @@ namespace VRChatActivityLogViewer
                     searchActivityTypes.Add(ActivityType.ReceivedInviteResponse);
                 if (parameter.IsReceivedRequestInviteResponse)
                     searchActivityTypes.Add(ActivityType.ReceivedRequestInviteResponse);
+                if (parameter.IsPlayedVideo)
+                    searchActivityTypes.Add(ActivityType.PlayedVideo);
 
                 List<ActivityLog> activityLogs = new List<ActivityLog>();
                 using (var db = new DatabaseContext())

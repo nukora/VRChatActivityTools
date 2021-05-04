@@ -22,6 +22,8 @@ namespace VRChatActivityLogger
         public static readonly string AcceptFriendRequest = "AcceptFriendRequest";
         public static readonly string ReceivedInviteResponse = "ReceivedInviteResponse";
         public static readonly string ReceivedRequestInviteResponse = "ReceivedRequestInviteResponse";
+        public static readonly string PlayedVideo1 = "PlayedVideo1";
+        public static readonly string PlayedVideo2 = "PlayedVideo2";
     }
 
     /// <summary>
@@ -41,6 +43,8 @@ namespace VRChatActivityLogger
         public static Regex AcceptFriendRequestDetail { get; }
         public static Regex ReceivedInviteResponseDetail { get; }
         public static Regex ReceivedRequestInviteResponseDetail { get; }
+        public static Regex PlayedVideo1Detail { get; }
+        public static Regex PlayedVideo2Detail { get; }
         public static Regex All { get; }
 
         /// <summary>
@@ -63,7 +67,8 @@ namespace VRChatActivityLogger
             string acceptFriendRequest = header + @"AcceptFriendRequest.+$";
             string receivedInviteResponse = header + @"Received Notification:.+type:inviteResponse,.+$";
             string receivedRequestInviteResponse = header + @"Received Notification:.+type:requestInviteResponse,.+$";
-
+            string playedVideo1 = header + @"User .+ added URL .+$";
+            string playedVideo2 = header + @"\[Video Playback\] Attempting to resolve URL '.+'$";
 
             //ログの種類判別(一括)
             string all = "";
@@ -78,7 +83,9 @@ namespace VRChatActivityLogger
             all += $@"(?<ReceivedFriendRequest>{receivedFriendRequest})|";
             all += $@"(?<AcceptFriendRequest>{acceptFriendRequest})|";
             all += $@"(?<ReceivedInviteResponse>{receivedInviteResponse})|";
-            all += $@"(?<ReceivedRequestInviteResponse>{receivedRequestInviteResponse})";
+            all += $@"(?<ReceivedRequestInviteResponse>{receivedRequestInviteResponse})|";
+            all += $@"(?<PlayedVideo1>{playedVideo1})|";
+            all += $@"(?<PlayedVideo2>{playedVideo2})";
             All = new Regex(all, RegexOptions.Compiled);
 
             //ログの詳細を解析
@@ -96,6 +103,8 @@ namespace VRChatActivityLogger
             string acceptFriendRequestDetail = detailHeader + @"AcceptFriendRequest Notification:<Notification from username:(.+), sender user id:(.{40}).+ of type: friendRequest, id: (.{40}),.+type:friendRequest,.+$";
             string receivedInviteResponseDetail = detailHeader + @"Received Notification: <Notification from username:(.+), sender user id:(.{40}).+ of type: inviteResponse, id: (.{40}).+{{.+?(, responseMessage=(.+?))?(, imageUrl=(.+?))?}}, type:inviteResponse,.+$";
             string receivedRequestInviteResponseDetail = detailHeader + @"Received Notification: <Notification from username:(.+), sender user id:(.{40}).+ of type: requestInviteResponse, id: (.{40}).+{{.+?(responseMessage=(.+?))?(, imageUrl=(.+?))?}}, type:requestInviteResponse,.+$";
+            string playedVideo1Detail = detailHeader + @"User (.+) added URL (.+)$";
+            string playedVideo2Detail = detailHeader + @"\[Video Playback\] Attempting to resolve URL '(.+)'$";
 
             ReceivedInviteDetail = new Regex(receivedInviteDetail, RegexOptions.Compiled);
             ReceivedRequestInviteDetail = new Regex(receivedRequestInviteDetail, RegexOptions.Compiled);
@@ -109,6 +118,8 @@ namespace VRChatActivityLogger
             AcceptFriendRequestDetail = new Regex(acceptFriendRequestDetail, RegexOptions.Compiled);
             ReceivedInviteResponseDetail = new Regex(receivedInviteResponseDetail, RegexOptions.Compiled);
             ReceivedRequestInviteResponseDetail = new Regex(receivedRequestInviteResponseDetail, RegexOptions.Compiled);
+            PlayedVideo1Detail = new Regex(playedVideo1Detail, RegexOptions.Compiled);
+            PlayedVideo2Detail = new Regex(playedVideo2Detail, RegexOptions.Compiled);
         }
     }
 }

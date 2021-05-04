@@ -75,6 +75,7 @@ namespace VRChatActivityLogViewer
                     UntilDateTime = untilDatePicker.SelectedDate?.AddDays(1),
                     IsReceivedInviteResponse = recvInvResCheckBox.IsChecked ?? false,
                     IsReceivedRequestInviteResponse = recvReqInvResCheckBox.IsChecked ?? false,
+                    IsPlayedVideo = videoCheckBox.IsChecked ?? false,
                 };
                 var activityLogs = await VRChatActivityLogModel.SearchActivityLogs(parameter);
 

@@ -14,7 +14,7 @@ namespace VRChatActivityToolsShared.Database
         /// <summary>
         /// データベースのバージョン
         /// </summary>
-        public static int Version { get; } = 2;
+        public static int Version { get; } = 3;
 
         /// <summary>
         /// データベースのファイルパス

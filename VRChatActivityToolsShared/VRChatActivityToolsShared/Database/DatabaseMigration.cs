@@ -126,6 +126,11 @@ FROM
             {
                 UpgradeDatabaseVersion2();
             }
+            
+            if (currentVersion < 3)
+            {
+                UpgradeDatabaseVersion3();
+            }
         }
 
         /// <summary>
@@ -167,6 +172,32 @@ ADD COLUMN
             using var command = new SqliteCommand(sql, db);
 
             command.Parameters.Add(new SqliteParameter("@Version", 2));
+
+            command.ExecuteNonQuery();
+        }
+
+        /// <summary>
+        /// データベースをver3へ更新します。
+        /// </summary>
+        private static void UpgradeDatabaseVersion3()
+        {
+            using var db = new SqliteConnection($"Filename={DatabaseContext.DBFilePath}");
+
+            db.Open();
+
+            #region var sql = "...";
+            var sql =
+@"
+UPDATE
+    ""Information""
+SET
+    ""Version"" = @Version;
+";
+            #endregion
+
+            using var command = new SqliteCommand(sql, db);
+
+            command.Parameters.Add(new SqliteParameter("@Version", 3));
 
             command.ExecuteNonQuery();
         }
