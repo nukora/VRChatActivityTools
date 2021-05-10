@@ -68,7 +68,7 @@ namespace VRChatActivityLogViewer
             if (activityLog.ActivityType == ActivityType.PlayedVideo)
             {
                 // Youtubeのみ特別扱いして埋め込みプレイヤーを表示する
-                var youtubeUrlRegex = @"^https?://(www\.)youtube\.com/watch\?v=([^&]+).*$|^https?://youtu\.be/(.*)$";
+                var youtubeUrlRegex = @"^https?://(www\.)?youtube\.com/watch\?v=([^&]+).*$|^https?://youtu\.be/(.*)$";
                 var match = Regex.Match(activityLog.Url, youtubeUrlRegex);
 
                 if (match.Success)
