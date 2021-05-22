@@ -107,6 +107,7 @@
                 <StackPanel Orientation="Horizontal">
                     <Button x:Name="JoinButton" Content="Join" Margin="5" Width="100" Click="JoinButton_Click"/>
                     <Button x:Name="CopyWorldIdButton" Content="Copy World ID" Margin="5" Width="100" Click="CopyWorldIdButton_Click"/>
+                    <Button x:Name="CopyWorldNameButton" Content="Copy World Name" Margin="5" Width="150" Click="CopyWorldNameButton_Click"/>
                     <Button x:Name="CopyUserIdButton" Content="Copy User ID" Margin="5" Width="100" Click="CopyUserIdButton_Click"/>
                     <Button x:Name="CopyUrlButton" Content="Copy Url" Margin="5" Width="100" Click="CopyUrlButton_Click"/>
                 </StackPanel>

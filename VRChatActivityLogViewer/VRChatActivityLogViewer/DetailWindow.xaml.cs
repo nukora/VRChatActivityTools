@@ -295,6 +295,21 @@ namespace VRChatActivityLogViewer
         }
 
         /// <summary>
+        /// Copy World Nameボタンクリック時のイベント
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CopyWorldNameButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (activityLog == null || activityLog.WorldName == null)
+            {
+                return;
+            }
+
+            Clipboard.SetText(activityLog.WorldName ?? "");
+        }
+
+        /// <summary>
         /// Copy User IDボタンクリック時のイベント
         /// </summary>
         /// <param name="sender"></param>
