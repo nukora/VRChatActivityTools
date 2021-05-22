@@ -54,6 +54,7 @@ namespace VRChatActivityLogViewer
             // ボタンの有効/無効
             JoinButton.Visibility = activityLog.WorldID != null ? Visibility.Visible : Visibility.Collapsed;
             CopyWorldIdButton.Visibility = activityLog.WorldID != null ? Visibility.Visible : Visibility.Collapsed;
+            CopyWorldNameButton.Visibility = activityLog.WorldID != null ? Visibility.Visible : Visibility.Collapsed;
             CopyUserIdButton.Visibility = activityLog.UserID != null ? Visibility.Visible : Visibility.Collapsed;
             CopyUrlButton.Visibility = activityLog.ActivityType == ActivityType.PlayedVideo && activityLog.Url != null ? Visibility.Visible : Visibility.Collapsed;
 
