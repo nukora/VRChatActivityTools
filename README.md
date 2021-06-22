@@ -81,8 +81,6 @@ inviteの送信履歴などから送信先となるユーザ名を表示する�
 
 このプログラムにはMITライセンスが適用されます。
 
-This software is released under the MIT License, see LICENSE.txt.
-
 # English
 
 ## Installation
@@ -160,6 +158,4 @@ It is not possible to display the name of the user to whom invitations are sent 
 
 ## License  
 
-This program is licensed under the MIT License.
-
-This software is released under the MIT License, see LICENSE.txt.
+This software is released under the MIT License, see LICENSE.
