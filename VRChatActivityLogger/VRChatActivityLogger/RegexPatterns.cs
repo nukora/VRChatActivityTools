@@ -64,7 +64,7 @@ namespace VRChatActivityLogger
             string metPlayer = header + @"\[(Player|[Ǆǅ]*|Behaviour)\] Initialized PlayerAPI.+$";
             string sendFriendRequest = header + @"Send notification:.+type:friendRequest,.+$";
             string receivedFriendRequest = header + @"Received Notification:.+type:friendRequest,.+$";
-            string acceptFriendRequest = header + @"AcceptFriendRequest.+$";
+            string acceptFriendRequest = header + @"AcceptNotification for notification:.+type:friendRequest,.+$";
             string receivedInviteResponse = header + @"Received Notification:.+type:inviteResponse,.+$";
             string receivedRequestInviteResponse = header + @"Received Notification:.+type:requestInviteResponse,.+$";
             string playedVideo1 = header + @"User .+ added URL .+$";
@@ -100,7 +100,7 @@ namespace VRChatActivityLogger
             string joinedRoom2Detail = detailHeader + @"\[(RoomManager|[Ǆǅ]*|Behaviour)\] Joining or Creating Room: (.+)$";
             string sendFriendRequestDetail = detailHeader + @"Send notification:.+sender user.+ to (.{40}).+type:friendRequest,.+$";
             string receivedFriendRequestDetail = detailHeader + @"Received Notification: <Notification from username:(.+), sender user id:(.{40}).+ of type: friendRequest, id: (.{40}),.+type:friendRequest,.+$";
-            string acceptFriendRequestDetail = detailHeader + @"AcceptFriendRequest Notification:<Notification from username:(.+), sender user id:(.{40}).+ of type: friendRequest, id: (.{40}),.+type:friendRequest,.+$";
+            string acceptFriendRequestDetail = detailHeader + @"AcceptNotification for notification:<Notification from username:(.+), sender user id:(.{40}).+ of type: friendRequest, id: (.{40}),.+type:friendRequest,.+$";
             string receivedInviteResponseDetail = detailHeader + @"Received Notification: <Notification from username:(.+), sender user id:(.{40}).+ of type: inviteResponse, id: (.{40}).+{{.+?(, responseMessage=(.+?))?(, imageUrl=(.+?))?}}, type:inviteResponse,.+$";
             string receivedRequestInviteResponseDetail = detailHeader + @"Received Notification: <Notification from username:(.+), sender user id:(.{40}).+ of type: requestInviteResponse, id: (.{40}).+{{.+?(responseMessage=(.+?))?(, imageUrl=(.+?))?}}, type:requestInviteResponse,.+$";
             string playedVideo1Detail = detailHeader + @"User (.+) added URL (.+)$";
