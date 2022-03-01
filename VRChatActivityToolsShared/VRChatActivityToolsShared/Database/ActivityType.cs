@@ -50,5 +50,11 @@ namespace VRChatActivityToolsShared.Database
 
         /// <summary>動画を再生した</summary>
         PlayedVideo = 13,
+
+        /// <summary>inviteを承認した</summary>
+        AcceptInvite = 14,
+
+        /// <summary>reqInvを承認した</summary>
+        AcceptRequestInvite = 15,
     }
 }

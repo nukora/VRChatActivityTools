@@ -30,6 +30,7 @@ namespace VRChatActivityLogger
             logger.Info("VRChatActivityLoggerを実行します。");
 
             var app = new VRChatActivityLogger();
+            app.VRChatLogFilePath = "./Test/";
             var returnCode = app.Run();
 
             logger.Info("VRChatActivityLoggerを終了します。");

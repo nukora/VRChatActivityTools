@@ -97,6 +97,8 @@
                     </StackPanel>
                     <StackPanel Grid.Row="4" Orientation="Horizontal">
                         <TextBlock Width="50" TextAlignment="Right" Margin="0,0,10,0" >Accept</TextBlock>
+                        <CheckBox x:Name="acptInvCheckBox" Content="Invite" IsChecked="True" Padding="4,-1,4,0"/>
+                        <CheckBox x:Name="acptReqInvCheckBox" Content="Request Invite" IsChecked="True" Padding="4,-1,4,0"/>
                         <CheckBox x:Name="acptFriendReqCheckBox" Content="Friend Request" IsChecked="True" Padding="4,-1,4,0"/>
                     </StackPanel>
                     <StackPanel Grid.Row="5" Orientation="Horizontal">
@@ -144,7 +146,7 @@
                                     <Setter Property="Background" Value="LightGreen" />
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.ReceivedInvite}">
-                                    <Setter Property="Background" Value="LightBlue" />
+                                    <Setter Property="Background" Value="SkyBlue" />
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.ReceivedRequestInvite}">
                                     <Setter Property="Background" Value="LightBlue" />
@@ -153,16 +155,22 @@
                                     <Setter Property="Background" Value="SkyBlue" />
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.SendRequestInvite}">
-                                    <Setter Property="Background" Value="SkyBlue" />
+                                    <Setter Property="Background" Value="LightBlue" />
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.ReceivedInviteResponse}">
-                                    <Setter Property="Background" Value="LightBlue" />
+                                    <Setter Property="Background" Value="SkyBlue" />
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.ReceivedRequestInviteResponse}">
                                     <Setter Property="Background" Value="LightBlue" />
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.PlayedVideo}">
                                     <Setter Property="Background" Value="Pink" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.AcceptInvite}">
+                                    <Setter Property="Background" Value="SkyBlue" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Type}" Value="{x:Static shareddb:ActivityType.AcceptRequestInvite}">
+                                    <Setter Property="Background" Value="LightBlue" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>

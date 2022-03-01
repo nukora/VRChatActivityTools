@@ -4,20 +4,67 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VRChatActivityLogViewer"
+        xmlns:shareddb="clr-namespace:VRChatActivityToolsShared.Database;assembly=VRChatActivityToolsShared"
         xmlns:toolkit="clr-namespace:Microsoft.Toolkit.Wpf.UI.Controls;assembly=Microsoft.Toolkit.Wpf.UI.Controls.WebView"
         mc:Ignorable="d"
         Loaded="DetailWindow_Loaded"
         Closed="DetailWindow_Closed"
+        x:Name="DetailDialog"
         Title="VRChatActivityViewer" Height="360" Width="500" ResizeMode="NoResize">
     <Grid>
         <Grid Margin="10">
             <Grid.RowDefinitions>
                 <RowDefinition Height="60"/>
                 <RowDefinition Height="30"/>
-                <RowDefinition Height="160"/>
+                <RowDefinition Height="*"/>
                 <RowDefinition Height="50"/>
             </Grid.RowDefinitions>
             <Grid x:Name="HeaderGrid" Grid.Row="0" Margin="5">
+                <Grid.Style>
+                    <Style TargetType="Grid">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ActivityLog.ActivityType, ElementName=DetailDialog}" Value="{x:Static shareddb:ActivityType.JoinedRoom}">
+                                <Setter Property="Background" Value="Plum" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ActivityLog.ActivityType, ElementName=DetailDialog}" Value="{x:Static shareddb:ActivityType.SendFriendRequest}">
+                                <Setter Property="Background" Value="LightGreen" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ActivityLog.ActivityType, ElementName=DetailDialog}" Value="{x:Static shareddb:ActivityType.ReceivedFriendRequest}">
+                                <Setter Property="Background" Value="LightGreen" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ActivityLog.ActivityType, ElementName=DetailDialog}" Value="{x:Static shareddb:ActivityType.AcceptFriendRequest}">
+                                <Setter Property="Background" Value="LightGreen" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ActivityLog.ActivityType, ElementName=DetailDialog}" Value="{x:Static shareddb:ActivityType.ReceivedInvite}">
+                                <Setter Property="Background" Value="SkyBlue" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ActivityLog.ActivityType, ElementName=DetailDialog}" Value="{x:Static shareddb:ActivityType.ReceivedRequestInvite}">
+                                <Setter Property="Background" Value="LightBlue" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ActivityLog.ActivityType, ElementName=DetailDialog}" Value="{x:Static shareddb:ActivityType.SendInvite}">
+                                <Setter Property="Background" Value="SkyBlue" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ActivityLog.ActivityType, ElementName=DetailDialog}" Value="{x:Static shareddb:ActivityType.SendRequestInvite}">
+                                <Setter Property="Background" Value="LightBlue" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ActivityLog.ActivityType, ElementName=DetailDialog}" Value="{x:Static shareddb:ActivityType.ReceivedInviteResponse}">
+                                <Setter Property="Background" Value="SkyBlue" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ActivityLog.ActivityType, ElementName=DetailDialog}" Value="{x:Static shareddb:ActivityType.ReceivedRequestInviteResponse}">
+                                <Setter Property="Background" Value="LightBlue" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ActivityLog.ActivityType, ElementName=DetailDialog}" Value="{x:Static shareddb:ActivityType.PlayedVideo}">
+                                <Setter Property="Background" Value="Pink" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ActivityLog.ActivityType, ElementName=DetailDialog}" Value="{x:Static shareddb:ActivityType.AcceptInvite}">
+                                <Setter Property="Background" Value="SkyBlue" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ActivityLog.ActivityType, ElementName=DetailDialog}" Value="{x:Static shareddb:ActivityType.AcceptRequestInvite}">
+                                <Setter Property="Background" Value="LightBlue" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
                 <TextBlock x:Name="ActivityTypeText" Margin="10,0,0,0" Text="ActivityType" FontSize="28" FontWeight="Bold" VerticalAlignment="Center">
                     <TextBlock.Effect>
                         <DropShadowEffect ShadowDepth="0" Direction="0" Color="White" Opacity="1" BlurRadius="4"/>

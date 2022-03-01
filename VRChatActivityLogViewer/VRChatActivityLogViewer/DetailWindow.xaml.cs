@@ -25,7 +25,8 @@ namespace VRChatActivityLogViewer
     /// </summary>
     public partial class DetailWindow : Window
     {
-        private ActivityLog activityLog;
+        public ActivityLog ActivityLog { get; }
+
         private VRChatApiService vrchatApiService;
         private WebService webService;
         private World world;
@@ -36,12 +37,12 @@ namespace VRChatActivityLogViewer
         /// <param name="activityLog"></param>
         public DetailWindow(ActivityLog activityLog)
         {
-            InitializeComponent();
-
-            this.activityLog = activityLog;
+            this.ActivityLog = activityLog;
 
             vrchatApiService = new VRChatApiService();
             webService = new WebService();
+
+            InitializeComponent();
 
             InitializeView();
         }
@@ -52,25 +53,25 @@ namespace VRChatActivityLogViewer
         private void InitializeView()
         {
             // ボタンの有効/無効
-            JoinButton.Visibility = activityLog.WorldID != null ? Visibility.Visible : Visibility.Collapsed;
-            CopyWorldIdButton.Visibility = activityLog.WorldID != null ? Visibility.Visible : Visibility.Collapsed;
-            CopyWorldNameButton.Visibility = activityLog.WorldID != null ? Visibility.Visible : Visibility.Collapsed;
-            CopyUserIdButton.Visibility = activityLog.UserID != null ? Visibility.Visible : Visibility.Collapsed;
-            CopyUrlButton.Visibility = activityLog.ActivityType == ActivityType.PlayedVideo && activityLog.Url != null ? Visibility.Visible : Visibility.Collapsed;
+            JoinButton.Visibility = ActivityLog.WorldID != null ? Visibility.Visible : Visibility.Collapsed;
+            CopyWorldIdButton.Visibility = ActivityLog.WorldID != null ? Visibility.Visible : Visibility.Collapsed;
+            CopyWorldNameButton.Visibility = ActivityLog.WorldID != null ? Visibility.Visible : Visibility.Collapsed;
+            CopyUserIdButton.Visibility = ActivityLog.UserID != null ? Visibility.Visible : Visibility.Collapsed;
+            CopyUrlButton.Visibility = ActivityLog.ActivityType == ActivityType.PlayedVideo && ActivityLog.Url != null ? Visibility.Visible : Visibility.Collapsed;
 
             // アクティビティタイプとタイムスタンプ
-            ActivityTypeText.Text = ActivityTypeToString(activityLog.ActivityType);
-            TimestampText.Text = activityLog.Timestamp?.ToString("yyyy/MM/dd HH:mm:ss");
+            ActivityTypeText.Text = ActivityTypeToString(ActivityLog.ActivityType);
+            TimestampText.Text = ActivityLog.Timestamp?.ToString("yyyy/MM/dd HH:mm:ss");
 
             // アクティビティタイプによってヘッダの表示内容を変更
             InitializeHeaderView();
 
             // Videoの場合
-            if (activityLog.ActivityType == ActivityType.PlayedVideo)
+            if (ActivityLog.ActivityType == ActivityType.PlayedVideo)
             {
                 // Youtubeのみ特別扱いして埋め込みプレイヤーを表示する
                 var youtubeUrlRegex = @"^https?://(www\.)?youtube\.com/watch\?v=([^&]+).*$|^https?://youtu\.be/(.*)$";
-                var match = Regex.Match(activityLog.Url, youtubeUrlRegex);
+                var match = Regex.Match(ActivityLog.Url, youtubeUrlRegex);
 
                 if (match.Success)
                 {
@@ -82,24 +83,24 @@ namespace VRChatActivityLogViewer
             }
 
             // Video以外の場合は共通の処理
-            if (activityLog.ActivityType != ActivityType.PlayedVideo)
+            if (ActivityLog.ActivityType != ActivityType.PlayedVideo)
             {
                 // ワールド名がある場合
-                if (activityLog.WorldName != null)
+                if (ActivityLog.WorldName != null)
                 {
-                    WorldNameText.Text = activityLog.WorldName;
+                    WorldNameText.Text = ActivityLog.WorldName;
                     ChangeWorldInfoButton.Visibility = Visibility.Visible;
                     UnknownContentsGrid.Visibility = Visibility.Hidden;
                     WorldInfoGrid.Visibility = Visibility.Visible;
                 }
 
                 // メッセージかURLがある場合
-                if (activityLog.Message != null || activityLog.Url != null)
+                if (ActivityLog.Message != null || ActivityLog.Url != null)
                 {
-                    MessageText.Text = activityLog.Message;
+                    MessageText.Text = ActivityLog.Message;
                     ChangeMessageInfoButton.Visibility = Visibility.Visible;
 
-                    if (activityLog.WorldName == null)
+                    if (ActivityLog.WorldName == null)
                     {
                         UnknownContentsGrid.Visibility = Visibility.Hidden;
                         MessageInfoGrid.Visibility = Visibility.Visible;
@@ -123,41 +124,16 @@ namespace VRChatActivityLogViewer
         /// </summary>
         private void InitializeHeaderView()
         {
-            if (activityLog.ActivityType == ActivityType.JoinedRoom)
+            if (ActivityLog.ActivityType == ActivityType.ReceivedInvite ||
+                ActivityLog.ActivityType == ActivityType.ReceivedInviteResponse ||
+                ActivityLog.ActivityType == ActivityType.ReceivedRequestInvite ||
+                ActivityLog.ActivityType == ActivityType.ReceivedRequestInviteResponse ||
+                ActivityLog.ActivityType == ActivityType.ReceivedFriendRequest ||
+                ActivityLog.ActivityType == ActivityType.AcceptFriendRequest ||
+                ActivityLog.ActivityType == ActivityType.AcceptInvite ||
+                ActivityLog.ActivityType == ActivityType.AcceptRequestInvite)
             {
-                HeaderGrid.Background = new SolidColorBrush(Colors.Plum);
-            }
-
-            if (activityLog.ActivityType == ActivityType.ReceivedInvite ||
-                activityLog.ActivityType == ActivityType.ReceivedInviteResponse ||
-                activityLog.ActivityType == ActivityType.ReceivedRequestInvite ||
-                activityLog.ActivityType == ActivityType.ReceivedRequestInviteResponse)
-            {
-                HeaderGrid.Background = new SolidColorBrush(Colors.LightBlue);
-                FromUserName.Text = $"from {activityLog.UserName}";
-            }
-
-            if (activityLog.ActivityType == ActivityType.SendInvite ||
-                activityLog.ActivityType == ActivityType.SendRequestInvite)
-            {
-                HeaderGrid.Background = new SolidColorBrush(Colors.SkyBlue);
-            }
-
-            if (activityLog.ActivityType == ActivityType.SendFriendRequest)
-            {
-                HeaderGrid.Background = new SolidColorBrush(Colors.LightGreen);
-            }
-
-            if (activityLog.ActivityType == ActivityType.ReceivedFriendRequest ||
-                activityLog.ActivityType == ActivityType.AcceptFriendRequest)
-            {
-                HeaderGrid.Background = new SolidColorBrush(Colors.LightGreen);
-                FromUserName.Text = $"from {activityLog.UserName}";
-            }
-
-            if (activityLog.ActivityType == ActivityType.PlayedVideo)
-            {
-                HeaderGrid.Background = new SolidColorBrush(Colors.Pink);
+                FromUserName.Text = $"from {ActivityLog.UserName}";
             }
         }
 
@@ -172,7 +148,7 @@ namespace VRChatActivityLogViewer
             {
                 await GetWorldInformation();
 
-                if (activityLog.WorldID != null)
+                if (ActivityLog.WorldID != null)
                 {
                     if (world != null)
                     {
@@ -183,9 +159,9 @@ namespace VRChatActivityLogViewer
                     }
                 }
 
-                if (activityLog.Url != null && activityLog.ActivityType != ActivityType.PlayedVideo)
+                if (ActivityLog.Url != null && ActivityLog.ActivityType != ActivityType.PlayedVideo)
                 {
-                    MessageImageContent.Source = await CreateBitmapImageFromUri(activityLog.Url);
+                    MessageImageContent.Source = await CreateBitmapImageFromUri(ActivityLog.Url);
                     MessageImageContent.Visibility = Visibility.Visible;
                 }
             }
@@ -211,7 +187,7 @@ namespace VRChatActivityLogViewer
                 return;
             }
 
-            var id = activityLog?.WorldID?.Split(':')[0];
+            var id = ActivityLog?.WorldID?.Split(':')[0];
             if (!string.IsNullOrWhiteSpace(id))
             {
                 world = await vrchatApiService.GetWorldAsync(id);
@@ -260,6 +236,8 @@ namespace VRChatActivityLogViewer
             ActivityType.SendRequestInviteResponse => "Send RequestInvite Response",
             ActivityType.ReceivedRequestInviteResponse => "Received RequestInvite Response",
             ActivityType.PlayedVideo => "Video",
+            ActivityType.AcceptInvite => "Accept Invite",
+            ActivityType.AcceptRequestInvite => "Accept RequestInvite",
             _ => "Unknown Activity",
         };
 
@@ -270,12 +248,12 @@ namespace VRChatActivityLogViewer
         /// <param name="e"></param>
         private void JoinButton_Click(object sender, RoutedEventArgs e)
         {
-            if(activityLog == null || activityLog.WorldID == null)
+            if(ActivityLog == null || ActivityLog.WorldID == null)
             {
                 return;
             }
 
-            var uri = "vrchat://launch?id=" + activityLog.WorldID;
+            var uri = "vrchat://launch?id=" + ActivityLog.WorldID;
             uri = uri.Replace("&", "^&");
             Process.Start(new ProcessStartInfo("cmd", $"/c start {uri}") { CreateNoWindow = true });
         }
@@ -287,12 +265,12 @@ namespace VRChatActivityLogViewer
         /// <param name="e"></param>
         private void CopyWorldIdButton_Click(object sender, RoutedEventArgs e)
         {
-            if (activityLog == null || activityLog.WorldID == null)
+            if (ActivityLog == null || ActivityLog.WorldID == null)
             {
                 return;
             }
 
-            Clipboard.SetText(activityLog.WorldID ?? "");
+            Clipboard.SetText(ActivityLog.WorldID ?? "");
         }
 
         /// <summary>
@@ -302,12 +280,12 @@ namespace VRChatActivityLogViewer
         /// <param name="e"></param>
         private void CopyWorldNameButton_Click(object sender, RoutedEventArgs e)
         {
-            if (activityLog == null || activityLog.WorldName == null)
+            if (ActivityLog == null || ActivityLog.WorldName == null)
             {
                 return;
             }
 
-            Clipboard.SetText(activityLog.WorldName ?? "");
+            Clipboard.SetText(ActivityLog.WorldName ?? "");
         }
 
         /// <summary>
@@ -317,12 +295,12 @@ namespace VRChatActivityLogViewer
         /// <param name="e"></param>
         private void CopyUserIdButton_Click(object sender, RoutedEventArgs e)
         {
-            if (activityLog == null || activityLog.UserID == null)
+            if (ActivityLog == null || ActivityLog.UserID == null)
             {
                 return;
             }
 
-            Clipboard.SetText(activityLog.UserID ?? "");
+            Clipboard.SetText(ActivityLog.UserID ?? "");
         }
 
         /// <summary>
@@ -332,12 +310,12 @@ namespace VRChatActivityLogViewer
         /// <param name="e"></param>
         private void CopyUrlButton_Click(object sender, RoutedEventArgs e)
         {
-            if (activityLog == null || activityLog.Url == null)
+            if (ActivityLog == null || ActivityLog.Url == null)
             {
                 return;
             }
 
-            Clipboard.SetText(activityLog.Url ?? "");
+            Clipboard.SetText(ActivityLog.Url ?? "");
         }
 
         /// <summary>
@@ -369,7 +347,7 @@ namespace VRChatActivityLogViewer
         /// <param name="e"></param>
         private void WorldHyperlink_Click(object sender, RoutedEventArgs e)
         {
-            var id = activityLog?.WorldID?.Split(':')[0];
+            var id = ActivityLog?.WorldID?.Split(':')[0];
             var uri = $"https://vrchat.com/home/world/{id}";
 
             Process.Start(new ProcessStartInfo("cmd", $"/c start {uri}") { CreateNoWindow = true });
@@ -384,7 +362,7 @@ namespace VRChatActivityLogViewer
         {
             try
             {
-                var s = activityLog.Url.Split('/');
+                var s = ActivityLog.Url.Split('/');
                 var fileName = s[s.Length - 1];
                 var dialog = new SaveFileDialog();
                 dialog.FileName = fileName;
@@ -392,7 +370,7 @@ namespace VRChatActivityLogViewer
 
                 if (dialog.ShowDialog() ?? false)
                 {
-                    await webService.DownloadFile(activityLog.Url, dialog.FileName);
+                    await webService.DownloadFile(ActivityLog.Url, dialog.FileName);
                 }
             }
             catch (Exception)

@@ -76,6 +76,8 @@ namespace VRChatActivityLogViewer
                     IsReceivedInviteResponse = recvInvResCheckBox.IsChecked ?? false,
                     IsReceivedRequestInviteResponse = recvReqInvResCheckBox.IsChecked ?? false,
                     IsPlayedVideo = videoCheckBox.IsChecked ?? false,
+                    IsAcceptInvite = acptInvCheckBox.IsChecked ?? false,
+                    IsAcceptRequestInvite = acptReqInvCheckBox.IsChecked ?? false,
                 };
                 var activityLogs = await VRChatActivityLogModel.SearchActivityLogs(parameter);
 
