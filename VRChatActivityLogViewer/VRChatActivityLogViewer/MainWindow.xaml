@@ -129,7 +129,7 @@
             </Grid>
 
             <Border Grid.Row="2" BorderBrush="Silver" BorderThickness="1">
-                <DataGrid x:Name="ActivityLogGrid" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" RowHeight="30" CellStyle="{StaticResource Body_Content_DataGrid_Centering}" >
+                <DataGrid x:Name="ActivityLogGrid" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" RowHeight="30" CellStyle="{StaticResource Body_Content_DataGrid_Centering}" MouseDoubleClick="ActivityLogGrid_MouseDoubleClick">
                     <DataGrid.ItemContainerStyle>
                         <Style TargetType="DataGridRow">
                             <Style.Triggers>

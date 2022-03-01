@@ -221,11 +221,43 @@ namespace VRChatActivityLogViewer
             {
                 if (button.Tag is ActivityLogGridModel tag)
                 {
-                    var dialog = new DetailWindow(tag.Source);
-                    dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-                    dialog.Show();
+                    if (!tag.IsDetailWindowEnabled)
+                    {
+                        return;
+                    }
+
+                    ShowDetailWindow(tag.Source);
                 }
             }
+        }
+
+        /// <summary>
+        /// グリッドをダブルクリックした時のイベント
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ActivityLogGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (ActivityLogGrid.SelectedItem is ActivityLogGridModel gridModel)
+            {
+                if (!gridModel.IsDetailWindowEnabled)
+                {
+                    return;
+                }
+
+                ShowDetailWindow(gridModel.Source);
+            }
+        }
+
+        /// <summary>
+        /// 詳細ダイアログを表示する
+        /// </summary>
+        /// <param name="activityLog"></param>
+        private void ShowDetailWindow(ActivityLog activityLog)
+        {
+            var dialog = new DetailWindow(activityLog);
+            dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            dialog.Show();
         }
 
         /// <summary>
