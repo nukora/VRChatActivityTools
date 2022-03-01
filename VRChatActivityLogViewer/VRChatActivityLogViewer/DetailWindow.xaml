@@ -10,7 +10,7 @@
         Loaded="DetailWindow_Loaded"
         Closed="DetailWindow_Closed"
         x:Name="DetailDialog"
-        Title="VRChatActivityViewer" Height="360" Width="500" ResizeMode="NoResize">
+        Title="VRChatActivityViewer" Height="360" Width="500">
     <Grid>
         <Grid Margin="10">
             <Grid.RowDefinitions>

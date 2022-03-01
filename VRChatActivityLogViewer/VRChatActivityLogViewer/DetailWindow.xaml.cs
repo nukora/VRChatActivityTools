@@ -79,6 +79,8 @@ namespace VRChatActivityLogViewer
                     var url = @$"https://www.youtube.com/embed/{id}";
                     VideoGrid.Visibility = Visibility.Visible;
                     VideoWebBrowser.Source = new Uri(url);
+
+                    Height = 460;
                 }
             }
 
