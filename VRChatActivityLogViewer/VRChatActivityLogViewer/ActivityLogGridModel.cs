@@ -152,6 +152,24 @@ namespace VRChatActivityLogViewer
                 IsDetailWindowEnabled = true;
                 IsCopyableUrl = true;
             }
+            if (activityLog.ActivityType == ActivityType.AcceptInvite)
+            {
+                ActivityName = "Accept Invite";
+                Content = addIcon + activityLog.UserName + " -> " + activityLog.WorldName;
+                WorldID = activityLog.WorldID;
+                IsCopyableWorldID = true;
+                UserID = activityLog.UserID;
+                IsCopyableUserID = true;
+                IsDetailWindowEnabled = true;
+            }
+            if (activityLog.ActivityType == ActivityType.AcceptRequestInvite)
+            {
+                ActivityName = "Accept RequestInvite";
+                Content = addIcon + activityLog.UserName;
+                UserID = activityLog.UserID;
+                IsCopyableUserID = true;
+                IsDetailWindowEnabled = true;
+            }
         }
     }
 }

@@ -24,6 +24,8 @@ namespace VRChatActivityLogger
         public static readonly string ReceivedRequestInviteResponse = "ReceivedRequestInviteResponse";
         public static readonly string PlayedVideo1 = "PlayedVideo1";
         public static readonly string PlayedVideo2 = "PlayedVideo2";
+        public static readonly string AcceptInvite = "AcceptInvite";
+        public static readonly string AcceptRequestInvite = "AcceptRequestInvite";
     }
 
     /// <summary>
@@ -45,6 +47,8 @@ namespace VRChatActivityLogger
         public static Regex ReceivedRequestInviteResponseDetail { get; }
         public static Regex PlayedVideo1Detail { get; }
         public static Regex PlayedVideo2Detail { get; }
+        public static Regex AcceptInviteDetail { get; }
+        public static Regex AcceptRequestInviteDetail { get; }
         public static Regex All { get; }
 
         /// <summary>
@@ -64,11 +68,13 @@ namespace VRChatActivityLogger
             string metPlayer = header + @"\[(Player|[Ǆǅ]*|Behaviour)\] Initialized PlayerAPI.+$";
             string sendFriendRequest = header + @"Send notification:.+type:friendRequest,.+$";
             string receivedFriendRequest = header + @"Received Notification:.+type:friendRequest,.+$";
-            string acceptFriendRequest = header + @"AcceptFriendRequest.+$";
+            string acceptFriendRequest = header + @"AcceptNotification for notification:.+type:friendRequest,.+$";
             string receivedInviteResponse = header + @"Received Notification:.+type:inviteResponse,.+$";
             string receivedRequestInviteResponse = header + @"Received Notification:.+type:requestInviteResponse,.+$";
             string playedVideo1 = header + @"User .+ added URL .+$";
             string playedVideo2 = header + @"\[Video Playback\] Attempting to resolve URL '.+'$";
+            string acceptInvite = header + @"AcceptNotification for notification:.+type:invite,.+$";
+            string acceptRequestInvite = header + @"AcceptNotification for notification:.+type:requestInvite,.+$";
 
             //ログの種類判別(一括)
             string all = "";
@@ -85,7 +91,9 @@ namespace VRChatActivityLogger
             all += $@"(?<ReceivedInviteResponse>{receivedInviteResponse})|";
             all += $@"(?<ReceivedRequestInviteResponse>{receivedRequestInviteResponse})|";
             all += $@"(?<PlayedVideo1>{playedVideo1})|";
-            all += $@"(?<PlayedVideo2>{playedVideo2})";
+            all += $@"(?<PlayedVideo2>{playedVideo2})|";
+            all += $@"(?<AcceptInvite>{acceptInvite})|";
+            all += $@"(?<AcceptRequestInvite>{acceptRequestInvite})";
             All = new Regex(all, RegexOptions.Compiled);
 
             //ログの詳細を解析
@@ -100,11 +108,13 @@ namespace VRChatActivityLogger
             string joinedRoom2Detail = detailHeader + @"\[(RoomManager|[Ǆǅ]*|Behaviour)\] Joining or Creating Room: (.+)$";
             string sendFriendRequestDetail = detailHeader + @"Send notification:.+sender user.+ to (.{40}).+type:friendRequest,.+$";
             string receivedFriendRequestDetail = detailHeader + @"Received Notification: <Notification from username:(.+), sender user id:(.{40}).+ of type: friendRequest, id: (.{40}),.+type:friendRequest,.+$";
-            string acceptFriendRequestDetail = detailHeader + @"AcceptFriendRequest Notification:<Notification from username:(.+), sender user id:(.{40}).+ of type: friendRequest, id: (.{40}),.+type:friendRequest,.+$";
+            string acceptFriendRequestDetail = detailHeader + @"AcceptNotification for notification:<Notification from username:(.+), sender user id:(.{40}).+ of type: friendRequest, id: (.{40}),.+type:friendRequest,.+$";
             string receivedInviteResponseDetail = detailHeader + @"Received Notification: <Notification from username:(.+), sender user id:(.{40}).+ of type: inviteResponse, id: (.{40}).+{{.+?(, responseMessage=(.+?))?(, imageUrl=(.+?))?}}, type:inviteResponse,.+$";
             string receivedRequestInviteResponseDetail = detailHeader + @"Received Notification: <Notification from username:(.+), sender user id:(.{40}).+ of type: requestInviteResponse, id: (.{40}).+{{.+?(responseMessage=(.+?))?(, imageUrl=(.+?))?}}, type:requestInviteResponse,.+$";
             string playedVideo1Detail = detailHeader + @"User (.+) added URL (.+)$";
             string playedVideo2Detail = detailHeader + @"\[Video Playback\] Attempting to resolve URL '(.+)'$";
+            string acceptInviteDetail = detailHeader + @"AcceptNotification for notification:<Notification from username:(.+), sender user id:(.{40}).+ of type: invite, id: (.{40}).+worldId=(.+), worldName=(.+?)(, inviteMessage=(.+?))?(, imageUrl=(.+?))?}}, type:invite,.+$";
+            string acceptRequestInviteDetail = detailHeader + @"AcceptNotification for notification:<Notification from username:(.+), sender user id:(.{40}).+ of type: requestInvite, id: (.{40}),.+{{(requestMessage=(.+?))?,? ?(imageUrl=(.+?))??}}, type:requestInvite,.+$";
 
             ReceivedInviteDetail = new Regex(receivedInviteDetail, RegexOptions.Compiled);
             ReceivedRequestInviteDetail = new Regex(receivedRequestInviteDetail, RegexOptions.Compiled);
@@ -120,6 +130,8 @@ namespace VRChatActivityLogger
             ReceivedRequestInviteResponseDetail = new Regex(receivedRequestInviteResponseDetail, RegexOptions.Compiled);
             PlayedVideo1Detail = new Regex(playedVideo1Detail, RegexOptions.Compiled);
             PlayedVideo2Detail = new Regex(playedVideo2Detail, RegexOptions.Compiled);
+            AcceptInviteDetail = new Regex(acceptInviteDetail, RegexOptions.Compiled);
+            AcceptRequestInviteDetail = new Regex(acceptRequestInviteDetail, RegexOptions.Compiled);
         }
     }
 }
