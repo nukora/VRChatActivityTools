@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using VRChatActivityLogViewer.VRChatApi;
+using VRChatActivityLogViewer.YoutubeApi;
 using VRChatActivityToolsShared.Database;
 
 namespace VRChatActivityLogViewer
@@ -27,6 +28,7 @@ namespace VRChatActivityLogViewer
         public ActivityLog ActivityLog { get; }
 
         private VRChatApiService vrchatApiService;
+        private YoutubeApiService youtubeApiService;
         private WebService webService;
         private World world;
 
@@ -39,6 +41,7 @@ namespace VRChatActivityLogViewer
             this.ActivityLog = activityLog;
 
             vrchatApiService = new VRChatApiService();
+            youtubeApiService = new YoutubeApiService();
             webService = new WebService();
 
             InitializeComponent();
@@ -64,21 +67,6 @@ namespace VRChatActivityLogViewer
 
             // アクティビティタイプによってヘッダの表示内容を変更
             InitializeHeaderView();
-
-            // Videoの場合
-            if (ActivityLog.ActivityType == ActivityType.PlayedVideo)
-            {
-                // Youtubeのみ特別扱いして埋め込みプレイヤーを表示する
-                var youtubeUrlRegex = @"^https?://(www\.)?youtube\.com/watch\?v=([^&]+).*$|^https?://youtu\.be/(.*)$";
-                var match = Regex.Match(ActivityLog.Url, youtubeUrlRegex);
-
-                if (match.Success)
-                {
-                    var id = match.Groups[2].Success ? match.Groups[2].Value : match.Groups[3].Success ? match.Groups[3].Value : string.Empty;
-                    var url = @$"https://www.youtube.com/embed/{id}";
-                    VideoGrid.Visibility = Visibility.Visible;
-                }
-            }
 
             // Video以外の場合は共通の処理
             if (ActivityLog.ActivityType != ActivityType.PlayedVideo)
@@ -151,6 +139,30 @@ namespace VRChatActivityLogViewer
                 {
                     MessageImageContent.Source = await CreateBitmapImageFromUri(ActivityLog.Url);
                     MessageImageContent.Visibility = Visibility.Visible;
+                }
+
+                if (ActivityLog.ActivityType == ActivityType.PlayedVideo)
+                {
+                    // Youtubeのみ特別扱いしてサムネイルを表示する
+                    var youtubeUrlRegex = @"^https?://(www\.)?youtube\.com/watch\?v=([^&]+).*$|^https?://youtu\.be/([^\?]+).*$";
+                    var match = Regex.Match(ActivityLog.Url, youtubeUrlRegex);
+
+                    if (match.Success)
+                    {
+                        var id = match.Groups[2].Success ? match.Groups[2].Value : match.Groups[3].Success ? match.Groups[3].Value : string.Empty;
+                        var oEmbed = await youtubeApiService.GetOEmbedAsync(id);
+
+                        if (oEmbed != null)
+                        {
+                            UnknownContentsGrid.Visibility = Visibility.Hidden;
+                            VideoGrid.Visibility = Visibility.Visible;
+
+                            VideoTitleText.Text = oEmbed.Title;
+                            VideoAuthorText.Text = $"{oEmbed.AuthorName}";
+                            VideoImageContent.Source = await CreateBitmapImageFromUri(oEmbed.ThumbnailUrl);
+                            VideoImageContent.Visibility = Visibility.Visible;
+                        }
+                    }
                 }
             }
             catch (Exception ex) when (ex is InvalidOperationException || ex is HttpRequestException)
@@ -337,6 +349,18 @@ namespace VRChatActivityLogViewer
         {
             var id = ActivityLog?.WorldID?.Split(':')[0];
             var uri = $"https://vrchat.com/home/world/{id}";
+
+            Process.Start(new ProcessStartInfo("cmd", $"/c start {uri}") { CreateNoWindow = true });
+        }
+
+        /// <summary>
+        /// ビデオタイトルクリック時のイベント
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void VideoHyperlink_Click(object sender, RoutedEventArgs e)
+        {
+            var uri = $"{ActivityLog.Url}";
 
             Process.Start(new ProcessStartInfo("cmd", $"/c start {uri}") { CreateNoWindow = true });
         }
