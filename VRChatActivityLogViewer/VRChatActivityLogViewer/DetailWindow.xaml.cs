@@ -1,5 +1,4 @@
-﻿using Microsoft.Toolkit.Win32.UI.Controls.Interop.WinRT;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -78,9 +77,6 @@ namespace VRChatActivityLogViewer
                     var id = match.Groups[2].Success ? match.Groups[2].Value : match.Groups[3].Success ? match.Groups[3].Value : string.Empty;
                     var url = @$"https://www.youtube.com/embed/{id}";
                     VideoGrid.Visibility = Visibility.Visible;
-                    VideoWebBrowser.Source = new Uri(url);
-
-                    Height = 460;
                 }
             }
 
@@ -109,16 +105,6 @@ namespace VRChatActivityLogViewer
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// ウィンドウが閉じる時のイベント
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void DetailWindow_Closed(object sender, EventArgs e)
-        {
-            VideoWebBrowser.Close();
         }
 
         /// <summary>
@@ -379,17 +365,6 @@ namespace VRChatActivityLogViewer
             {
                 MessageBox.Show("ファイルの保存に失敗しました", "VRChatActivityLogViewer", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-        }
-
-        /// <summary>
-        /// 埋め込みプレイヤーが新しいウィンドウをリクエストした時のイベント
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void VideoWebBrowser_NewWindowRequested(object sender, WebViewControlNewWindowRequestedEventArgs e)
-        {
-            Process.Start(new ProcessStartInfo("cmd", $"/c start {e.Uri}") { CreateNoWindow = true });
-            e.Handled = true;
         }
     }
 }

@@ -5,10 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VRChatActivityLogViewer"
         xmlns:shareddb="clr-namespace:VRChatActivityToolsShared.Database;assembly=VRChatActivityToolsShared"
-        xmlns:toolkit="clr-namespace:Microsoft.Toolkit.Wpf.UI.Controls;assembly=Microsoft.Toolkit.Wpf.UI.Controls.WebView"
         mc:Ignorable="d"
         Loaded="DetailWindow_Loaded"
-        Closed="DetailWindow_Closed"
         x:Name="DetailDialog"
         Title="VRChatActivityViewer" Height="360" Width="500">
     <Grid>
@@ -145,7 +143,6 @@
                 </Grid>
             </Grid>
             <Grid x:Name="VideoGrid" Grid.Row="2" Margin="5" Visibility="Hidden">
-                <toolkit:WebView x:Name="VideoWebBrowser" NewWindowRequested="VideoWebBrowser_NewWindowRequested"/>
             </Grid>
             <Grid x:Name="UnknownContentsGrid" Grid.Row="2" Margin="5" Visibility="Visible">
                 <TextBlock Text="&#xE70B;" FontFamily="Segoe MDL2 Assets" FontSize="64" HorizontalAlignment="Center" VerticalAlignment="Center"/>

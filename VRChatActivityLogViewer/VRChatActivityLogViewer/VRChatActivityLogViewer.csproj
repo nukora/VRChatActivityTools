@@ -18,10 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Toolkit.Wpf.UI.Controls.WebView" Version="6.1.2" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\VRChatActivityToolsShared\VRChatActivityToolsShared\VRChatActivityToolsShared.csproj" />
   </ItemGroup>
 
