@@ -171,7 +171,7 @@ namespace VRChatActivityLogViewer
             {
                 if (button.Tag is ActivityLogGridModel tag)
                 {
-                    Clipboard.SetText(tag.WorldID ?? "");
+                    Clipboard.SetDataObject(tag.WorldID ?? "");
                 }
             }
         }
@@ -187,7 +187,7 @@ namespace VRChatActivityLogViewer
             {
                 if (button.Tag is ActivityLogGridModel tag)
                 {
-                    Clipboard.SetText(tag.UserID ?? "");
+                    Clipboard.SetDataObject(tag.UserID ?? "");
                 }
             }
         }

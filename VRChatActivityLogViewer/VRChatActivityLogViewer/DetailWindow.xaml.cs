@@ -270,7 +270,7 @@ namespace VRChatActivityLogViewer
                 return;
             }
 
-            Clipboard.SetText(ActivityLog.WorldID ?? "");
+            Clipboard.SetDataObject(ActivityLog.WorldID ?? "");
         }
 
         /// <summary>
@@ -285,7 +285,7 @@ namespace VRChatActivityLogViewer
                 return;
             }
 
-            Clipboard.SetText(ActivityLog.WorldName ?? "");
+            Clipboard.SetDataObject(ActivityLog.WorldName ?? "");
         }
 
         /// <summary>
@@ -300,7 +300,7 @@ namespace VRChatActivityLogViewer
                 return;
             }
 
-            Clipboard.SetText(ActivityLog.UserID ?? "");
+            Clipboard.SetDataObject(ActivityLog.UserID ?? "");
         }
 
         /// <summary>
@@ -315,7 +315,7 @@ namespace VRChatActivityLogViewer
                 return;
             }
 
-            Clipboard.SetText(ActivityLog.Url ?? "");
+            Clipboard.SetDataObject(ActivityLog.Url ?? "");
         }
 
         /// <summary>
