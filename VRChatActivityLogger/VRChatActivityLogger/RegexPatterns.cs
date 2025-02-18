@@ -57,7 +57,7 @@ namespace VRChatActivityLogger
         static RegexPatterns()
         {
             //ログの種類判別(個別)
-            string header = @"^\d{4}\.\d{2}\.\d{2}\s\d{2}:\d{2}:\d{2}\sLog\s{8}-\s{2}";
+            string header = @"^\d{4}\.\d{2}\.\d{2}\s\d{2}:\d{2}:\d{2}\s.{11}-\s{2}";
 
             string receivedInvite = header + @"Received Notification:.+type:invite,.+$";
             string receivedRequestInvite = header + @"Received Notification:.+type:requestInvite,.+$";
@@ -97,7 +97,7 @@ namespace VRChatActivityLogger
             All = new Regex(all, RegexOptions.Compiled);
 
             //ログの詳細を解析
-            string detailHeader = @"^(\d{4}\.\d{2}\.\d{2}\s\d{2}:\d{2}:\d{2})\sLog\s{8}-\s{2}";
+            string detailHeader = @"^(\d{4}\.\d{2}\.\d{2}\s\d{2}:\d{2}:\d{2})\s.{11}-\s{2}";
 
             string receivedInviteDetail = detailHeader + @"Received Notification: <Notification from username:(.+), sender user id:(.{40}).+ of type: invite, id: (.{40}).+worldId=(.+), worldName=(.+?)(, inviteMessage=(.+?))?(, imageUrl=(.+?))?}}, type:invite,.+$";
             string receivedRequestInviteDetail = detailHeader + @"Received Notification: <Notification from username:(.+), sender user id:(.{40}).+ of type: requestInvite, id: (.{40}),.+{{(requestMessage=(.+?))?,? ?(imageUrl=(.+?))??}}, type:requestInvite,.+$";
