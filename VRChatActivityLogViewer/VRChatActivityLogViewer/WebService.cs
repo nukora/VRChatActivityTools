@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
@@ -21,11 +22,14 @@ namespace VRChatActivityLogViewer
         /// <summary>
         /// ユーザーエージェント文字列
         /// </summary>
-        private static string userAgent = "Wget/1.20.3";
+        private const string UserAgent = "VRChatActivityLogViewer/{Version} nukora";
 
         static WebService()
         {
-            client.DefaultRequestHeaders.Add("User-Agent", userAgent);
+            var version = Assembly.GetExecutingAssembly().GetName().Version;
+            var replacedUserAgent = UserAgent.Replace("{Version}", $"{version.Major}.{version.Minor}.{version.Build}");
+
+            client.DefaultRequestHeaders.Add("User-Agent", replacedUserAgent);
         }
 
         /// <summary>

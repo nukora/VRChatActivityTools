@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.Json;
+using System.Reflection;
 
 namespace VRChatActivityLogViewer.VRChatApi
 {
@@ -30,7 +31,7 @@ namespace VRChatActivityLogViewer.VRChatApi
         /// <summary>
         /// ユーザーエージェント文字列
         /// </summary>
-        private static string userAgent = "Wget/1.20.3";
+        private const string UserAgent = "VRChatActivityLogViewer/{Version} nukora";
 
         static VRChatApiService()
         {
@@ -39,7 +40,10 @@ namespace VRChatActivityLogViewer.VRChatApi
                 PropertyNameCaseInsensitive = true,
             };
 
-            client.DefaultRequestHeaders.Add("User-Agent", userAgent);
+            var version = Assembly.GetExecutingAssembly().GetName().Version;
+            var replacedUserAgent = UserAgent.Replace("{Version}", $"{version.Major}.{version.Minor}.{version.Build}");
+
+            client.DefaultRequestHeaders.Add("User-Agent", replacedUserAgent);
         }
 
         /// <summary>
