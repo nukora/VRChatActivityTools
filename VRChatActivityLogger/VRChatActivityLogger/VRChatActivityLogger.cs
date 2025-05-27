@@ -17,13 +17,26 @@ namespace VRChatActivityLogger
         /// <summary>
         /// ロガー
         /// </summary>
-        private NLog.Logger logger = Logger.GetLogger();
+        private readonly NLog.Logger logger = Logger.GetLogger();
 
         /// <summary>
         /// VRChatのログの保存場所
+        /// 規定値はローカルマシンのフォルダ
         /// </summary>
         public string VRChatLogFilePath { get; set; } =
-            Regex.Replace(GetFolderPath(SpecialFolder.LocalApplicationData), @"\\[^\\]+$", "") + @"\LocalLow\VRChat\VRChat\";
+            Path.Combine(Regex.Replace(GetFolderPath(SpecialFolder.LocalApplicationData), @"\\[^\\]+$", ""), "LocalLow", "VRChat", "VRChat");
+
+        /// <summary>
+        /// DB接続設定
+        /// </summary>
+        private readonly DbConfig _configuration;
+
+        public VRChatActivityLogger(DbConfig configuration)
+        {
+            _configuration = configuration;
+            var pgm = Path.GetFullPath(System.AppDomain.CurrentDomain.BaseDirectory);
+            errorFilePath = Path.Combine(pgm, "Logs", "VRChatActivityLogger", "errorfile.txt");
+        }
 
         /// <summary>
         /// 処理を実行します。
@@ -34,7 +47,10 @@ namespace VRChatActivityLogger
             var logger = Logger.GetLogger();
             try
             {
+                logger.Info($"エラーログ出力先: {errorFilePath}");
                 ClearErrorInfoFile();
+
+                var factory = new DbOperatorFactory(_configuration);
 
                 // ログ解析
                 var activityLogs = new List<ActivityLog>();
@@ -45,34 +61,37 @@ namespace VRChatActivityLogger
                 }
                 activityLogs = activityLogs.OrderBy(a => a.Timestamp).ToList();
 
-                // DBファイルチェック
-                if (!File.Exists(DatabaseContext.DBFilePath))
+                // DB確認
+                using (var context = factory.GetDbContext())
                 {
-                    logger.Info("データベースファイルが見つかりませんでした。新しく作成します。");
+                    if (!context.Database.CanConnect())
+                    {
+                        logger.Info("データベースが見つかりませんでした。新しく作成します。");
 
-                    DatabaseMigration.CreateDatabase();
+                        factory.DbMigration.CreateDbAndTables(context);
 
-                    logger.Info("データベースファイルを作成しました。");
-                }
+                        logger.Info("データベースを作成しました。");
+                    }
 
-                // DBバージョンチェック
-                var currentVersion = DatabaseMigration.GetCurrentVersion();
+                    // DBバージョンチェック
+                    var currentVersion = factory.DbMigration.GetCurrentVersion(context);
 
-                if (currentVersion < DatabaseContext.Version)
-                {
-                    logger.Info("古いバージョンのデータベースを使用しています。データベースのアップグレードを行います。");
+                    if (currentVersion < ActivityContextBase.Version)
+                    {
+                        logger.Info("古いバージョンのデータベースを使用しています。データベースのアップグレードを行います。");
 
-                    DatabaseMigration.UpgradeDatabase();
+                        factory.DbMigration.UpgradeDatabase(context);
 
-                    logger.Info("データベースをアップグレードしました。");
-                }
-                else if (DatabaseContext.Version < currentVersion)
-                {
-                    throw new InvalidOperationException("新しいバージョンのアプリで作成されたデータベースが存在するため、処理を中断します。");
+                        logger.Info("データベースをアップグレードしました。");
+                    }
+                    else if (ActivityContextBase.Version < currentVersion)
+                    {
+                        throw new InvalidOperationException("新しいバージョンのアプリで作成されたデータベースが存在するため、処理を中断します。");
+                    }
                 }
 
                 // DB更新
-                using (var db = new DatabaseContext())
+                using (var db = factory.GetDbContext())
                 {
                     // 既にDBに登録されているログは登録対象から削除する
                     var lastActivity = db.ActivityLogs.Find(db.ActivityLogs.Max(a => a.ID));
@@ -121,11 +140,8 @@ namespace VRChatActivityLogger
                     {
                         try
                         {
-                            foreach (var activityLog in activityLogs)
-                            {
-                                db.Add(activityLog);
-                                db.SaveChanges();
-                            }
+                            db.AddRange(activityLogs);
+                            db.SaveChanges();
                             transaction.Commit();
                         }
                         catch (Exception)
@@ -496,7 +512,7 @@ namespace VRChatActivityLogger
 
         private string processingLine = string.Empty;
 
-        private readonly string errorFilePath = "./Logs/VRChatActivityLogger/errorfile.txt";
+        private readonly string errorFilePath;
 
         /// <summary>
         /// エラーファイルをクリアします。
