@@ -15,7 +15,7 @@ namespace VRChatActivityLogViewer
         /// </summary>
         /// <param name="parameter"></param>
         /// <returns></returns>
-        public static async Task<List<ActivityLog>> SearchActivityLogs(ActivityLogSearchParameter parameter)
+        public static async Task<List<ActivityLog>> SearchActivityLogs(ActivityLogSearchParameter parameter, DbOperatorFactory factory)
         {
             return await Task.Run(() =>
             {
@@ -50,7 +50,7 @@ namespace VRChatActivityLogViewer
                     searchActivityTypes.Add(ActivityType.AcceptRequestInvite);
 
                 List<ActivityLog> activityLogs = new List<ActivityLog>();
-                using (var db = new DatabaseContext())
+                using (var db = factory.GetDbContext())
                 {
                     activityLogs = db.ActivityLogs
                         .Where(a => searchActivityTypes.Contains(a.ActivityType))
